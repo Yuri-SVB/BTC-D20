@@ -1,0 +1,88 @@
+
+% Configurable parameters
+\newcommand{\yellowHue}{50}        % Hue in degrees (0-360)
+\newcommand{\yellowSat}{1}         % Saturation (0-1)
+\newcommand{\yellowVmax}{1}        % Maximum brightness (0-1)
+\newcommand{\yellowVmin}{0.125}    % Minimum brightness (0-1)
+
+\definecolor{ycellO}{Hsb}{50, 0.8, 1}
+\definecolor{ycellI}{Hsb}{50, 0.8, 0.95}
+\definecolor{ycellZ}{Hsb}{50, 0.8, 0.85}
+\definecolor{ycellE}{Hsb}{50, 0.8, 0.8}
+\definecolor{ycellA}{Hsb}{25, 0.8, 1}
+\definecolor{ycellS}{Hsb}{25, 0.8, 0.95}
+\definecolor{ycellG}{Hsb}{25, 0.8, 0.85}
+\definecolor{ycellT}{Hsb}{25, 0.8, 0.8}
+
+\newcommand{\tricolor}[3]{%
+  \ifcase\numexpr#1*4+#2*2+#3\relax
+    \cellcolor{ycellO}%  % 0: (0,0,0)
+  \or
+    \cellcolor{ycellI}%  % 1: (0,0,1)
+  \or
+    \cellcolor{ycellZ}%  % 2: (0,1,0)
+  \or
+    \cellcolor{ycellE}%  % 3: (0,1,1)
+  \or
+    \cellcolor{ycellA}%  % 4: (1,0,0)
+  \or
+    \cellcolor{ycellS}%  % 5: (1,0,1)
+  \or
+    \cellcolor{ycellG}%  % 6: (1,1,0)
+  \or
+    \cellcolor{ycellT}%  % 7: (1,1,1)
+  \fi
+}
+
+\definecolor{yrowO}{Hsb}{50, 1, 1}
+\definecolor{yrowI}{Hsb}{50, 1, 0.95}
+\definecolor{yrowZ}{Hsb}{50, 1, 0.85}
+\definecolor{yrowE}{Hsb}{50, 1, 0.8}
+\definecolor{yrowA}{Hsb}{25, 1, 1}
+\definecolor{yrowS}{Hsb}{25, 1, 0.95}
+\definecolor{yrowG}{Hsb}{25, 1, 0.85}
+\definecolor{yrowT}{Hsb}{25, 1, 0.8}
+
+\newcommand{\tricolorrow}[3]{%
+  \ifcase\numexpr#1*4+#2*2+#3\relax
+    \cellcolor{yrowO}%  % 0: (0,0,0)
+  \or
+    \cellcolor{yrowI}%  % 1: (0,0,1)
+  \or
+    \cellcolor{yrowZ}%  % 2: (0,1,0)
+  \or
+    \cellcolor{yrowE}%  % 3: (0,1,1)
+  \or
+    \cellcolor{yrowA}%  % 4: (1,0,0)
+  \or
+    \cellcolor{yrowS}%  % 5: (1,0,1)
+  \or
+    \cellcolor{yrowG}%  % 6: (1,1,0)
+  \or
+    \cellcolor{yrowT}%  % 7: (1,1,1)
+  \fi
+}
+
+\newcommand{\tricolorbrow}[3]{%
+  \ifcase\numexpr#1*4+#2*2+#3\relax
+    \cellcolor{ycellO}%  % 0: (0,0,0)
+  \or
+    \cellcolor{ycellI}%  % 1: (0,0,1)
+  \or
+    \cellcolor{ycellZ}%  % 2: (0,1,0)
+  \or
+    \cellcolor{ycellE}%  % 3: (0,1,1)
+  \or
+    \cellcolor{ycellA}%  % 4: (1,0,0)
+  \or
+    \cellcolor{ycellS}%  % 5: (1,0,1)
+  \or
+    \cellcolor{ycellG}%  % 6: (1,1,0)
+  \or
+    \cellcolor{ycellT}%  % 7: (1,1,1)
+  \fi
+}
+
+
+\definecolor{oddcol}{Hsb}{50, 1, 1}
+\definecolor{evencol}{Hsb}{25, 1, 1}

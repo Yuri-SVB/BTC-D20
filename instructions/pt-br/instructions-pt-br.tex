@@ -1,0 +1,89 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper, margin=1cm]{geometry}\usepackage[brazilian]{babel}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{qrcode}
+\usepackage{fontawesome5}
+\pagestyle{empty}
+
+\begin{document}
+
+\section*{\faBitcoin~Gerando uma Frase Semente BIP39 com Dados de 20 Faces}
+
+\footnotesize
+
+Uma frase semente mnemônica BIP39 fornece a entropia mestre para sua carteira de Bitcoin. Embora softwares possam gerar essa aleatoriedade, o uso de dados físicos oferece uma fonte de entropia transparente e verificável que não depende de nenhum gerador de números aleatórios eletrônico. Este tutorial explica como gerar uma frase semente segura de 12 palavras utilizando um dado de 20 faces e a tabela de consulta (verso).
+
+\subsection*{\faTable~Entendendo a Estrutura da Tabela}
+
+A tabela de referência está organizada como um sistema de consulta 
+tridimensional. Cada uma das 2048 palavras do padrão BIP39 é identificada de forma única por três coordenadas, que chamaremos de D1, D2 e D3. A primeira coordenada (\textbf{D1}) seleciona uma das \textbf{8 seções} de página, a segunda (\textbf{D2}) seleciona uma das \textbf{16 linhas} dentro dessa seção, e a terceira (\textbf{D3}) seleciona uma das \textbf{16 colunas}. Juntos, esses três valores identificam exatamente uma palavra na tabela.
+
+\subsection*{\faDiceD20~O Procedimento de Rolagem}
+
+Para cada uma das primeiras 11 palavras da sua frase semente, você deve obter três resultados válidos do dado. Role o dado e registre o resultado apenas se ele mostrar um valor entre 1 e 16 (inclusive). Se o dado mostrar 17, 18, 19 ou 20, \textbf{descarte essa rolagem} e role novamente até obter um resultado válido. Repita esse processo até ter três números válidos (D1, D2, D3) para a palavra atual.
+
+\begin{tcolorbox}[colback=yellow!15, colframe=yellow!65!black, title=\faLightbulb~Exemplo de Geração de Palavra]
+Suponha que você esteja gerando sua quinta palavra da semente. Você rola o dado e obtém: 19 (inválido, role novamente), 3 (válido, D1 = \texttt{3,4}), 1 (válido, D2 = \texttt{1}), 20 (inválido, role novamente), 11 (válido, D3 = \texttt{11}). Suas coordenadas são ((3,4), 1, 11). Navegue até a seção 3,4 na tabela, encontre a linha 1 e então a coluna 11 para obter sua palavra: \texttt{candy}.
+\end{tcolorbox}
+
+\subsection*{\faPen~12ª Palavra}
+
+Para gerar a última palavra da sua semente BIP39, repita o procedimento para as 2 primeiras coordenadas igual ao realizado para as 11 primeiras palavras, selecionando, portanto, a seção e a linha da tabela. Neste ponto, existe exatamente uma única palavra na linha selecionada (com 16 alternativas) que formará uma semente BIP39 válida. A determinação da coluna para a última palavra \textbf{não} será feita por rolamento de dados, e sim por tentativa e erro no wizard de input da semente da sua carteira.
+
+\begin{tcolorbox}[colback=yellow!15, colframe=yellow!65!black, title=\faLightbulb~`Exemplo de Geração da Última Palavra]
+Suponha que suas 11 primeiras palavras sejam, em ordem: \textit{``never, use, this, example, because, private, key, secret, need, phrase,} e \textit{true''}.\\
+
+Agora você gerará sua 12ª palavra da semente. Você rola o dado e obtém: 18 (inválido, role novamente), 12 (válido, D1 = \texttt{11,12}), 9 (válido, D2 = \texttt{9}). Com isso, a sua 12ª palavra já está determinada: teste uma por uma as palavras da linha \texttt{9} da seção \texttt{11,12} e você verá que palavra da coluna \texttt{14}, \texttt{random}, (e apenas ela), formará, juntamente com as 11 primeiras, nesta ordem, uma semente BIP39 válida: 
+
+\vspace{1em}
+\texttt{1.never 2.use 3.this 4.example 5.because 6.private 7.key 8.secret 9.need 10.phrase 11.true 12.random}. \faCheckCircle
+\vspace{1em}
+\end{tcolorbox}
+
+\subsection*{\faListOl~Resumo}
+
+\begin{itemize}
+ \item Role um dado de 20 faces. \textbf{Descarte} resultados \textbf{17, 18, 19} ou \textbf{20}
+ \item Cada rolamento válido (de 1 a 16 inclusive) especifica uma coordenada de uma palavra
+ \item Cada uma das \textbf{8 seções (D1)} corresponde a \textbf{2} resultados válidos possíveis
+ \item Cada uma das \textbf{16 linhas (D2)}, bem como cada uma das \textbf{16 colunas (D3)} corresponde a \textbf{1} único resultado válido possível
+ \item A \textbf{coluna (D3) da 12ª palavra}, excepcionalmente, é determinada por tentativa e erro de uma em \textbf{16} possibilidades
+\end{itemize}
+
+\vspace{1em}
+\begin{tcolorbox}[colback=yellow!10, colframe=orange!90, title=\faExclamationTriangle\ Avisos de Segurança]
+\begin{itemize}
+ \item Nunca use a frase semente deste exemplo acima, porque para as suas chaves privadas serem secretas, a sua frase semente precisa ser verdadeiramente randômica
+ \item Realize este procedimento em um local privado. Não fotografe nem registre digitalmente suas rolagens ou resultados intermediários. Escreva sua frase semente final em papel e guarde-a em local seguro
+ \item Para máxima segurança, apenas digite sua frase semente em dispositivos \textit{air gapped} confiados e de sua propriedade
+\end{itemize}
+
+\end{tcolorbox}
+
+\vspace{1em}
+
+\begin{tcolorbox}[colback=blue!5, colframe=blue!50, title=\faInfoCircle~Saiba Mais]
+\begin{minipage}[c]{0.8\textwidth}
+Gostou deste tutorial? Acesse: \texttt{www.loudproudandfree.com} pelo seu navegador ou escaneie o QR code ao lado. Lá você encontrará:
+
+\begin{description}
+ \item [Mais tutoriais:] Gostaria de \textbf{frases com tema} em vez de palavras soltas? Temos!
+ \item [Cursos e consultorias:] Tire suas dúvidas com um especialista
+ \item [Twitter, Nostr e Telegram:] Fala parte do movimento e siga-nos para se manter informado
+ \item [Segurança Física:] Medo de roubo ou sequestro? Confira nosso app de segurança física anti-frágil
+\end{description}
+
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.15\textwidth}
+\centering
+\qrcode[height=2.5cm]{https://www.loudproudandfree.com}
+
+% \small\textit{Escaneie para acessar}
+\end{minipage}
+\end{tcolorbox}
+
+
+\end{document}

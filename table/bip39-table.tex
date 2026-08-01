@@ -1,0 +1,102 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper, margin=0.3cm]{geometry}
+\usepackage{nicematrix}
+\usepackage{tabularray}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{array}
+\usepackage[table]{xcolor}
+\usepackage{xfp}
+\usepackage{colortbl}
+
+% Integer division (quotient)
+\newcommand{\intdiv}[2]{%
+  \fpeval{floor(#1 / #2)}%
+}
+
+% Remainder (modulo)
+\newcommand{\intmod}[2]{%
+  \fpeval{#1 - #2 * floor(#1 / #2)}%
+}
+
+\newcommand{\cellnum}{-1}
+\newcommand{\paritya}{0}
+\newcommand{\parityb}{0}
+\newcommand{\parityc}{0}
+\newcommand{\nextcellarithm}{%
+  \xdef\cellnum{\fpeval{\cellnum + 1}}%
+  \csname cell\cellnum\endcsname%
+  \xdef\paritya{\intmod{\cellnum}{2}}
+  \xdef\parityb{\intmod{\intdiv{\cellnum}{16}}{2}}
+  \xdef\parityc{\intmod{\intdiv{\cellnum}{256}}{2}}
+}
+
+\newcommand{\prevcellarithm}{%
+  \xdef\cellnum{\fpeval{\cellnum - 1}}%
+  \csname cell\cellnum\endcsname%
+  \xdef\paritya{\intmod{\cellnum}{2}}
+  \xdef\parityb{\intmod{\intdiv{\cellnum}{16}}{2}}
+  \xdef\parityc{\intmod{\intdiv{\cellnum}{256}}{2}}
+}
+
+\input{colors.tex}
+
+\newcommand{\mycel}[1]{\multicolumn{1}{l  }{\hspace{-7  pt} \nextcell #1}}
+\newcommand{\myrow}[1]{\multicolumn{1}{|c|}{\nextrow #1 \prevcellarithm}}
+\newcommand{\mybrow}[1]{\multirowcell{16}{\nextbrow \textbf{#1} \prevcellarithm}}
+% \newcommand{\mybrow}[1]{}
+% \newcommand{\mybrow}[1]{\SetCell[r=16]{bg=yellow} \nextbrow #1 \prevcellarithm}
+% \newcommand{\mybrow}[1]{\Block[fill=yellow]{16-1}{#1}}
+
+\newcommand{\nextcell}{\nextcellarithm \tricolor{\paritya}{\parityb}{\parityc}}
+\newcommand{\nextrow}{\nextcellarithm \tricolorrow{\paritya}{\parityb}{\parityc}}
+\newcommand{\nextbrow}{\nextcellarithm \tricolorbrow{\paritya}{\parityb}{\parityc}}
+
+\input{bip39-words.tex}
+
+\begin{document}
+
+\begin{table}[h]
+\centering
+\tiny
+\setlength{\tabcolsep}{0pt}
+% \caption{16×16×8 Three-dimensional data}
+
+% \begin{tabular}{|l|lllllllllllllllll|}
+\begin{tabular}{|llllllllllllllllll|}
+% \begin{NiceTabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}[hvlines]
+% \begin{tblr}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+
+% \toprule
+\hline
+\multicolumn{1}{|c|}{D1} & 
+\multicolumn{1}{|c|}{D2$\backslash$D3} & 
+\multicolumn{1}{|c}{\cellcolor{oddcol} 1} & 
+\multicolumn{1}{c}{\cellcolor{evencol} 2} & 
+\multicolumn{1}{c}{\cellcolor{oddcol} 3} & 
+\multicolumn{1}{c}{\cellcolor{evencol} 4} & 
+\multicolumn{1}{c}{\cellcolor{oddcol} 5} & 
+\multicolumn{1}{c}{\cellcolor{evencol} 6} & 
+\multicolumn{1}{c}{\cellcolor{oddcol} 7} & 
+\multicolumn{1}{c}{\cellcolor{evencol} 8} & 
+\multicolumn{1}{c}{\cellcolor{oddcol} 9} & 
+\multicolumn{1}{c}{\cellcolor{evencol} 10} & 
+\multicolumn{1}{c}{\cellcolor{oddcol} 11} & 
+\multicolumn{1}{c}{\cellcolor{evencol} 12} & 
+\multicolumn{1}{c}{\cellcolor{oddcol} 13} & 
+\multicolumn{1}{c}{\cellcolor{evencol} 14} & 
+\multicolumn{1}{c}{\cellcolor{oddcol} 15} & 
+\multicolumn{1}{c|}{\cellcolor{evencol} 16} \\
+\hline
+%\midrule
+
+\input{table-struct.tex}
+
+\end{tabular}
+% \end{NiceTabular}
+% \end{tblr}
+
+\end{table}
+
+\end{document}

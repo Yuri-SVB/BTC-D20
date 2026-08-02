@@ -1,11 +1,6 @@
 \documentclass[10pt]{article}
-\usepackage[a4paper, margin=1cm]{geometry}\usepackage[brazilian]{babel}
-\usepackage{enumitem}
-\usepackage{xcolor}
-\usepackage{tcolorbox}
-\usepackage{qrcode}
-\usepackage{fontawesome5}
-\pagestyle{empty}
+\input{../common/preamble.tex}
+\usepackage[brazilian]{babel}
 
 \begin{document}
 
@@ -13,77 +8,77 @@
 
 \footnotesize
 
-Uma frase semente mnemônica BIP39 fornece a entropia mestre para sua carteira de Bitcoin. Embora softwares possam gerar essa aleatoriedade, o uso de dados físicos oferece uma fonte de entropia transparente e verificável que não depende de nenhum gerador de números aleatórios eletrônico. Este tutorial explica como gerar uma frase semente segura de 12 palavras utilizando um dado de 20 faces e a tabela de consulta (verso).
+Uma frase semente mnemônica BIP39 fornece a entropia mestre para sua carteira de Bitcoin. Embora softwares possam gerar essa aleatoriedade, o uso de dados físicos oferece uma fonte de entropia transparente e verificável, que não depende de nenhum gerador de números aleatórios eletrônico. Este tutorial explica como gerar uma frase semente segura de 12 palavras utilizando um dado de 20 faces e a tabela de consulta (verso).
+
+\begin{contextbox}{\faNewspaper~Por que entropia verificável? --- o incidente de julho de 2026}
+Em julho de 2026, mais de mil BTC foram varridos em minutos de carteiras cujas sementes haviam sido criadas por dispositivos Coldcard com um defeito de firmware existente desde 2021: a geração da semente usava silenciosamente um PRNG previsível de software em vez do RNG de hardware, entregando muito menos entropia do que o prometido. O fabricante corrigiu rapidamente --- e o próprio aviso oficial registra que sementes geradas com 50 ou mais rolagens honestas de dados nunca estiveram em risco. A lição não é sobre uma marca: \textbf{toda entropia eletrônica é invisível para o usuário}. Não dá para olhar um chip e enxergar se sua aleatoriedade está saudável --- mas dá para olhar um dado. Neste tutorial, todos os 128 bits da sua semente vêm de rolagens que você confere com os próprios olhos.
+\end{contextbox}
 
 \subsection*{\faTable~Entendendo a Estrutura da Tabela}
 
-A tabela de referência está organizada como um sistema de consulta 
-tridimensional. Cada uma das 2048 palavras do padrão BIP39 é identificada de forma única por três coordenadas, que chamaremos de D1, D2 e D3. A primeira coordenada (\textbf{D1}) seleciona uma das \textbf{8 seções} de página, a segunda (\textbf{D2}) seleciona uma das \textbf{16 linhas} dentro dessa seção, e a terceira (\textbf{D3}) seleciona uma das \textbf{16 colunas}. Juntos, esses três valores identificam exatamente uma palavra na tabela.
+A tabela de referência está organizada como um sistema de consulta
+tridimensional. Cada uma das 2048 palavras do padrão BIP39 é identificada de forma única por três coordenadas, que chamaremos de D1, D2 e D3. A primeira coordenada (\textbf{D1}) seleciona uma das \textbf{8 seções} de página, a segunda (\textbf{D2}) seleciona uma das \textbf{16 linhas} dentro dessa seção, e a terceira (\textbf{D3}) seleciona uma das \textbf{16 colunas}. Juntos, esses três valores identificam exatamente uma palavra na tabela. As palavras da semente são sempre as do padrão BIP39 em inglês, aceitas por praticamente todas as carteiras.
 
 \subsection*{\faDiceD20~O Procedimento de Rolagem}
 
 Para cada uma das primeiras 11 palavras da sua frase semente, você deve obter três resultados válidos do dado. Role o dado e registre o resultado apenas se ele mostrar um valor entre 1 e 16 (inclusive). Se o dado mostrar 17, 18, 19 ou 20, \textbf{descarte essa rolagem} e role novamente até obter um resultado válido. Repita esse processo até ter três números válidos (D1, D2, D3) para a palavra atual.
 
-\begin{tcolorbox}[colback=yellow!15, colframe=yellow!65!black, title=\faLightbulb~Exemplo de Geração de Palavra]
+\begin{examplebox}{\faLightbulb~Exemplo de Geração de Palavra}
 Suponha que você esteja gerando sua quinta palavra da semente. Você rola o dado e obtém: 19 (inválido, role novamente), 3 (válido, D1 = \texttt{3,4}), 1 (válido, D2 = \texttt{1}), 20 (inválido, role novamente), 11 (válido, D3 = \texttt{11}). Suas coordenadas são ((3,4), 1, 11). Navegue até a seção 3,4 na tabela, encontre a linha 1 e então a coluna 11 para obter sua palavra: \texttt{candy}.
-\end{tcolorbox}
+\end{examplebox}
 
 \subsection*{\faPen~12ª Palavra}
 
-Para gerar a última palavra da sua semente BIP39, repita o procedimento para as 2 primeiras coordenadas igual ao realizado para as 11 primeiras palavras, selecionando, portanto, a seção e a linha da tabela. Neste ponto, existe exatamente uma única palavra na linha selecionada (com 16 alternativas) que formará uma semente BIP39 válida. A determinação da coluna para a última palavra \textbf{não} será feita por rolamento de dados, e sim por tentativa e erro no wizard de input da semente da sua carteira.
+Para gerar a última palavra da sua semente BIP39, repita o procedimento para as 2 primeiras coordenadas igual ao realizado para as 11 primeiras palavras, selecionando, portanto, a seção e a linha da tabela. Neste ponto, existe exatamente uma única palavra na linha selecionada (com 16 alternativas) que formará uma semente BIP39 válida. A determinação da coluna para a última palavra \textbf{não} será feita por rolamento de dados, e sim por tentativa e erro no wizard de input da semente da sua carteira --- de preferência em um dispositivo \textit{air gapped}: ele rejeitará as 15 candidatas inválidas e aceitará a única válida.
 
-\begin{tcolorbox}[colback=yellow!15, colframe=yellow!65!black, title=\faLightbulb~`Exemplo de Geração da Última Palavra]
-Suponha que suas 11 primeiras palavras sejam, em ordem: \textit{``never, use, this, example, because, private, key, secret, need, phrase,} e \textit{true''}.\\
+\begin{examplebox}{\faLightbulb~Exemplo de Geração da Última Palavra}
+Suponha que suas 11 primeiras palavras sejam, em ordem: \textit{``never, use, this, example, because, private, key, secret, need, phrase,} e \textit{true''}.
 
-Agora você gerará sua 12ª palavra da semente. Você rola o dado e obtém: 18 (inválido, role novamente), 12 (válido, D1 = \texttt{11,12}), 9 (válido, D2 = \texttt{9}). Com isso, a sua 12ª palavra já está determinada: teste uma por uma as palavras da linha \texttt{9} da seção \texttt{11,12} e você verá que palavra da coluna \texttt{14}, \texttt{random}, (e apenas ela), formará, juntamente com as 11 primeiras, nesta ordem, uma semente BIP39 válida: 
+Agora você gerará sua 12ª palavra da semente. Você rola o dado e obtém: 18 (inválido, role novamente), 12 (válido, D1 = \texttt{11,12}), 9 (válido, D2 = \texttt{9}). Com isso, a sua 12ª palavra já está determinada: teste uma por uma as palavras da linha \texttt{9} da seção \texttt{11,12} e você verá que a palavra da coluna \texttt{14}, \texttt{random}, (e apenas ela), formará, juntamente com as 11 primeiras, nesta ordem, uma semente BIP39 válida:
 
-\vspace{1em}
+\vspace{0.5em}
 \texttt{1.never 2.use 3.this 4.example 5.because 6.private 7.key 8.secret 9.need 10.phrase 11.true 12.random}. \faCheckCircle
-\vspace{1em}
-\end{tcolorbox}
+\end{examplebox}
 
 \subsection*{\faListOl~Resumo}
 
-\begin{itemize}
+\begin{itemize}[itemsep=1pt]
  \item Role um dado de 20 faces. \textbf{Descarte} resultados \textbf{17, 18, 19} ou \textbf{20}
  \item Cada rolamento válido (de 1 a 16 inclusive) especifica uma coordenada de uma palavra
  \item Cada uma das \textbf{8 seções (D1)} corresponde a \textbf{2} resultados válidos possíveis
  \item Cada uma das \textbf{16 linhas (D2)}, bem como cada uma das \textbf{16 colunas (D3)} corresponde a \textbf{1} único resultado válido possível
  \item A \textbf{coluna (D3) da 12ª palavra}, excepcionalmente, é determinada por tentativa e erro de uma em \textbf{16} possibilidades
+ \item No total, \textbf{35 rolagens válidas} produzem os \textbf{128 bits} completos de entropia da semente; os 4 bits de \textit{checksum} ficam por conta da carteira
 \end{itemize}
 
-\vspace{1em}
-\begin{tcolorbox}[colback=yellow!10, colframe=orange!90, title=\faExclamationTriangle\ Avisos de Segurança]
-\begin{itemize}
- \item Nunca use a frase semente deste exemplo acima, porque para as suas chaves privadas serem secretas, a sua frase semente precisa ser verdadeiramente randômica
+\begin{warnbox}{\faExclamationTriangle~Avisos de Segurança}
+\begin{itemize}[itemsep=1pt]
+ \item Nunca use a frase semente do exemplo acima, porque para as suas chaves privadas serem secretas, a sua frase semente precisa ser verdadeiramente randômica
  \item Realize este procedimento em um local privado. Não fotografe nem registre digitalmente suas rolagens ou resultados intermediários. Escreva sua frase semente final em papel e guarde-a em local seguro
- \item Para máxima segurança, apenas digite sua frase semente em dispositivos \textit{air gapped} confiados e de sua propriedade
+ \item Para máxima segurança, apenas digite sua frase semente em dispositivos \textit{air gapped} de sua confiança e propriedade
+ \item Se você suspeita que uma semente sua foi gerada por software ou firmware defeituoso (como no incidente de julho de 2026), gere uma semente nova com este método e transfira seus fundos para ela: atualizar o firmware \textbf{não} conserta uma semente fraca já existente
 \end{itemize}
+\end{warnbox}
 
-\end{tcolorbox}
-
-\vspace{1em}
-
-\begin{tcolorbox}[colback=blue!5, colframe=blue!50, title=\faInfoCircle~Saiba Mais]
+\begin{infobox}{\faInfoCircle~Saiba Mais}
 \begin{minipage}[c]{0.8\textwidth}
-Gostou deste tutorial? Acesse: \texttt{www.loudproudandfree.com} pelo seu navegador ou escaneie o QR code ao lado. Lá você encontrará:
+Este tutorial é de autoria de \textbf{Yuri da Silva Villas Boas} --- autor da BIP-450 (Formosa) e criador do protocolo Great Wall. Acesse \texttt{www.loudproudandfree.com} pelo seu navegador ou escaneie o QR code ao lado. Lá você encontrará:
 
-\begin{description}
+\begin{description}[itemsep=1pt]
  \item [Mais tutoriais:] Gostaria de \textbf{frases com tema} em vez de palavras soltas? Temos!
  \item [Cursos e consultorias:] Tire suas dúvidas com um especialista
- \item [Twitter, Nostr e Telegram:] Fala parte do movimento e siga-nos para se manter informado
- \item [Segurança Física:] Medo de roubo ou sequestro? Confira nosso app de segurança física anti-frágil
+ \item [Twitter/X, Nostr e Telegram:] Faça parte do movimento e siga-nos para se manter informado
+ \item [Great Wall:] Gerar uma semente forte é só o primeiro passo; protegê-la contra roubo e coerção é o resto. Great Wall é nosso protocolo de software livre para autocustódia resistente a coerção: \texttt{github.com/Yuri-SVB}
 \end{description}
 
 \end{minipage}%
 \hfill
 \begin{minipage}[c]{0.15\textwidth}
 \centering
-\qrcode[height=2.5cm]{https://www.loudproudandfree.com}
-
-% \small\textit{Escaneie para acessar}
+\qrcode[height=2.2cm]{https://www.loudproudandfree.com}
 \end{minipage}
-\end{tcolorbox}
+\end{infobox}
 
+\editionsfooter{Rev. 2026-08}
 
 \end{document}

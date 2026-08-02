@@ -1,0 +1,31 @@
+% Shared preamble for all language editions of the instructions sheet.
+% Language files load this first, then their babel option, then the content.
+\usepackage[a4paper, margin=1cm]{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{qrcode}
+\usepackage{fontawesome5}
+\usepackage{titlesec}
+\pagestyle{empty}
+
+% Compact vertical rhythm so each edition fits a single A4 recto.
+\titlespacing*{\section}{0pt}{0pt}{4pt}
+\titlespacing*{\subsection}{0pt}{6pt}{3pt}
+\setlist{itemsep=1pt, topsep=2pt, parsep=0pt}
+\tcbset{boxsep=1pt, top=2pt, bottom=2pt, left=4pt, right=4pt,
+        before skip=6pt, after skip=6pt}
+
+% Box styles used by every edition.
+\newtcolorbox{contextbox}[1]{colback=red!4, colframe=red!55!black, title={#1}}
+\newtcolorbox{examplebox}[1]{colback=yellow!15, colframe=yellow!65!black, title={#1}}
+\newtcolorbox{warnbox}[1]{colback=yellow!10, colframe=orange!90, title={#1}}
+\newtcolorbox{infobox}[1]{colback=blue!5, colframe=blue!50, title={#1}}
+
+% Footer line naming the sibling editions.
+\newcommand{\editionsfooter}[1]{%
+  \vfill
+  \begin{center}
+  \scriptsize\color{black!60}#1 --- EN \textperiodcentered{} ES
+  \textperiodcentered{} IT \textperiodcentered{} PT-BR
+  \end{center}}

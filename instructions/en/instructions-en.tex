@@ -1,0 +1,82 @@
+\documentclass[10pt]{article}
+\input{../common/preamble.tex}
+
+\begin{document}
+
+\section*{\faBitcoin~Generating a BIP39 Seed Phrase with a 20-Sided Die}
+
+\footnotesize
+
+A BIP39 mnemonic seed phrase provides the master entropy for your Bitcoin wallet. Software can generate that randomness for you, but physical dice offer a transparent, verifiable source of entropy that does not depend on any electronic random-number generator. This tutorial explains how to generate a secure 12-word seed phrase using a 20-sided die (D20) and the lookup table (on the back).
+
+\begin{contextbox}{\faNewspaper~Why verifiable entropy? --- the July 2026 incident}
+In July 2026, more than a thousand BTC were swept within minutes from wallets whose seeds had been created by Coldcard devices carrying a firmware flaw dating back to 2021: seed generation silently used a predictable software PRNG instead of the hardware RNG, delivering far less entropy than promised. The vendor patched quickly --- and its own advisory notes that seeds generated from 50 or more honest dice rolls were never at risk. The lesson is not about one brand: \textbf{all electronic entropy is invisible to its user}. You cannot look at a chip and see whether its randomness is healthy --- but you can look at a die. With this tutorial, all 128 bits of your seed come from rolls you verify with your own eyes.
+\end{contextbox}
+
+\subsection*{\faTable~Understanding the Table Structure}
+
+The reference table is organized as a three-dimensional lookup system. Each of the 2048 words of the BIP39 standard is uniquely identified by three coordinates, which we will call D1, D2 and D3. The first coordinate (\textbf{D1}) selects one of the \textbf{8 page sections}, the second (\textbf{D2}) selects one of the \textbf{16 rows} within that section, and the third (\textbf{D3}) selects one of the \textbf{16 columns}. Together, these three values identify exactly one word in the table. Seed words are always those of the English BIP39 standard, accepted by virtually every wallet.
+
+\subsection*{\faDiceD20~The Rolling Procedure}
+
+For each of the first 11 words of your seed phrase, you must obtain three valid die results. Roll the die and record the result only if it shows a value between 1 and 16 (inclusive). If the die shows 17, 18, 19 or 20, \textbf{discard that roll} and roll again until you obtain a valid result. Repeat this process until you have three valid numbers (D1, D2, D3) for the current word.
+
+\begin{examplebox}{\faLightbulb~Word Generation Example}
+Suppose you are generating the fifth word of your seed. You roll the die and obtain: 19 (invalid, roll again), 3 (valid, D1 = \texttt{3,4}), 1 (valid, D2 = \texttt{1}), 20 (invalid, roll again), 11 (valid, D3 = \texttt{11}). Your coordinates are ((3,4), 1, 11). Navigate to section 3,4 of the table, find row 1 and then column 11 to obtain your word: \texttt{candy}.
+\end{examplebox}
+
+\subsection*{\faPen~The 12th Word}
+
+To generate the last word of your BIP39 seed, repeat the procedure for the first 2 coordinates exactly as done for the first 11 words, thereby selecting the section and the row of the table. At this point, there is exactly one word in the selected row (out of 16 alternatives) that will form a valid BIP39 seed. The column of the last word is \textbf{not} determined by rolling dice, but by trial and error in your wallet's seed-entry wizard --- preferably on an \textit{air-gapped} device: it will reject the 15 invalid candidates and accept the single valid one.
+
+\begin{examplebox}{\faLightbulb~Last Word Generation Example}
+Suppose your first 11 words are, in order: \textit{``never, use, this, example, because, private, key, secret, need, phrase,} and \textit{true''}.
+
+Now you will generate your 12th seed word. You roll the die and obtain: 18 (invalid, roll again), 12 (valid, D1 = \texttt{11,12}), 9 (valid, D2 = \texttt{9}). With that, your 12th word is already determined: test the words of row \texttt{9} of section \texttt{11,12} one by one and you will see that the word of column \texttt{14}, \texttt{random}, (and only it), together with the first 11, in this order, forms a valid BIP39 seed:
+
+\vspace{0.5em}
+\texttt{1.never 2.use 3.this 4.example 5.because 6.private 7.key 8.secret 9.need 10.phrase 11.true 12.random}. \faCheckCircle
+\end{examplebox}
+
+\subsection*{\faListOl~Summary}
+
+\begin{itemize}[itemsep=1pt]
+ \item Roll a 20-sided die. \textbf{Discard} results \textbf{17, 18, 19} or \textbf{20}
+ \item Each valid roll (1 through 16 inclusive) specifies one coordinate of one word
+ \item Each of the \textbf{8 sections (D1)} corresponds to \textbf{2} possible valid results
+ \item Each of the \textbf{16 rows (D2)}, as well as each of the \textbf{16 columns (D3)}, corresponds to \textbf{1} single possible valid result
+ \item The \textbf{column (D3) of the 12th word}, exceptionally, is determined by trial and error among \textbf{16} possibilities
+ \item In total, \textbf{35 valid rolls} produce the full \textbf{128 bits} of seed entropy; the 4 checksum bits are the wallet's job
+\end{itemize}
+
+\begin{warnbox}{\faExclamationTriangle~Security Warnings}
+\begin{itemize}[itemsep=1pt]
+ \item Never use the seed phrase from the example above: for your private keys to be secret, your seed phrase must be truly random
+ \item Perform this procedure in a private place. Do not photograph or digitally record your rolls or intermediate results. Write your final seed phrase on paper and store it in a safe place
+ \item For maximum security, only type your seed phrase into trusted \textit{air-gapped} devices that you own
+ \item If you suspect one of your seeds was generated by flawed software or firmware (as in the July 2026 incident), generate a fresh seed with this method and move your funds to it: a firmware update does \textbf{not} repair an existing weak seed
+\end{itemize}
+\end{warnbox}
+
+\begin{infobox}{\faInfoCircle~Learn More}
+\begin{minipage}[c]{0.8\textwidth}
+This tutorial is by \textbf{Yuri da Silva Villas Boas} --- author of BIP-450 (Formosa) and creator of the Great Wall protocol. Visit \texttt{www.loudproudandfree.com} in your browser or scan the QR code on the side. There you will find:
+
+\begin{description}[itemsep=1pt]
+ \item [More tutorials:] Would you like \textbf{themed phrases} instead of loose words? We have them!
+ \item [Courses and consulting:] Get your questions answered by a specialist
+ \item [Twitter/X, Nostr and Telegram:] Join the movement and follow us to stay informed
+ \item [Great Wall:] Generating a strong seed is only step one; protecting it against theft and coercion is the rest. Great Wall is our free-software protocol for coercion-resistant self-custody: \texttt{github.com/Yuri-SVB}
+\end{description}
+
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.15\textwidth}
+\centering
+\qrcode[height=2.2cm]{https://www.loudproudandfree.com}
+\end{minipage}
+\end{infobox}
+
+\editionsfooter{Rev. 2026-08}
+
+\end{document}

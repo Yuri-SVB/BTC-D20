@@ -2,9 +2,11 @@
 
 [English](README.md) · [Español](README.es.md) · [Italiano](README.it.md) · **Português (BR)**
 
+**Repositório oficial:** [github.com/Yuri-SVB/BTC-D20](https://github.com/Yuri-SVB/BTC-D20)
+
 Um kit imprimível de duas páginas para gerar uma frase semente [BIP-39](https://github.com/bitcoin/bips/blob/master/bip-0039/bip-0039.mediawiki) de 12 palavras usando apenas um dado de 20 faces (D20), caneta e papel:
 
-- **Folha de instruções** (frente) — disponível em inglês, espanhol, italiano e português do Brasil.
+- **Folha de instruções** (frente) — disponível em inglês, espanhol, italiano e português do Brasil, em edição padrão (12 palavras) e estendida (12 e 24 palavras, mais o atalho de autocompletar a última palavra).
 - **Tabela de consulta** (verso) — as 2048 palavras BIP-39 organizadas como um sistema de coordenadas 8 × 16 × 16.
 
 Cada rolagem que você registra é entropia que você viu com os próprios olhos. Nenhum gerador eletrônico de números aleatórios participa da escolha das suas palavras.
@@ -32,7 +34,9 @@ Cada palavra BIP-39 é endereçada por três rolagens do dado, mantendo apenas r
 
 Onze palavras são roladas por completo (11 × 11 = 121 bits). Para a décima segunda palavra, rolam-se apenas D1 e D2 (mais 7 bits, totalizando 128); a coluna dela codifica o *checksum* de 4 bits, de modo que exatamente uma das 16 palavras da linha selecionada completa uma semente válida — encontrada por tentativa e erro no assistente de entrada de semente da carteira.
 
-Os dois exemplos impressos nas instruções são verificados por máquina pelo [`tools/verify_tutorial.py`](tools/verify_tutorial.py) contra a lista de palavras oficial e o algoritmo de checksum.
+As **edições estendidas** cobrem adicionalmente sementes de 24 palavras — palavras 1–23 roladas por completo (253 bits), apenas D1 para a 24ª (mais 3 bits, 256 no total; 70 rolagens válidas), com exatamente uma palavra válida por seção de 256 palavras — e o **atalho de autocompletar a última palavra**: ferramentas como o fluxo *final word* do SeedSigner, o [SeedPicker](https://github.com/merland/seedpicker), o [BIP39 Recoverer offline da Coinplate](https://github.com/Coinplate/BIP39-Recoverer-Seed-Phrase-Recovery-Tool) ou a [página de Ian Coleman](https://iancoleman.io/bip39/) (offline) listam as últimas palavras válidas, das quais existem sempre exatamente **128 para uma semente de 12 palavras (uma por linha da tabela)** e **8 para uma de 24 (uma por seção)** — então uma rolagem de D1(+D2) escolhe a sua. Elas também linkam o artigo companheiro [*No Quiet Fix: Kerckhoffs' Lemma and the July 2026 Seed-Entropy Incident*](posts/kerckhoffs-lemma-coldcard.md).
+
+Os dois exemplos impressos nas instruções — e as contagens de 128/8 candidatas acima — são verificados por máquina pelo [`tools/verify_tutorial.py`](tools/verify_tutorial.py) contra a lista de palavras oficial e o algoritmo de checksum.
 
 **A integridade da tabela é estrutural, não afirmada.** Não existe cópia da lista de palavras neste repositório: a compilação lê o `bip-0039/english.txt` diretamente do repositório canônico [`bitcoin/bips`](https://github.com/bitcoin/bips), montado em `external/bips` como submódulo git fixado em um commit exato e baixado de forma esparsa, de modo que apenas o `bip-0039/` chega ao disco — assim as palavras da tabela impressa ficam ancoradas, pelo próprio hashing do git, ao histórico upstream, e o `make verify` ainda confere o arquivo contra o SHA-256 de referência do BIP-39. Audite você mesmo: `git submodule status` e `sha256sum external/bips/bip-0039/english.txt`.
 
@@ -74,7 +78,8 @@ A CI roda `make verify` e recompila todos os PDFs a cada push, publicando-os com
 ```
 instructions/
   common/preamble.tex     layout compartilhado, caixas, espaçamento compacto
-  en/ es/ it/ pt-br/      uma folha autocontida por idioma
+  en/ es/ it/ pt-br/      folha padrão + estendida por idioma
+posts/                    artigos companheiros (Lema de Kerckhoffs, ...)
 table/
   bip39-table.tex         computa a tabela inteira da lista de palavras ao compilar
 external/

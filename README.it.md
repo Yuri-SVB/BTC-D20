@@ -2,9 +2,11 @@
 
 [English](README.md) · [Español](README.es.md) · **Italiano** · [Português (BR)](README.pt-BR.md)
 
+**Repository ufficiale:** [github.com/Yuri-SVB/BTC-D20](https://github.com/Yuri-SVB/BTC-D20)
+
 Un kit stampabile di due pagine per generare una frase seme [BIP-39](https://github.com/bitcoin/bips/blob/master/bip-0039/bip-0039.mediawiki) di 12 parole usando soltanto un dado a 20 facce (D20), penna e carta:
 
-- **Foglio di istruzioni** (fronte) — disponibile in inglese, spagnolo, italiano e portoghese brasiliano.
+- **Foglio di istruzioni** (fronte) — disponibile in inglese, spagnolo, italiano e portoghese brasiliano, in edizione standard (12 parole) ed estesa (12 e 24 parole, più la scorciatoia del completamento dell'ultima parola).
 - **Tabella di consultazione** (retro) — le 2048 parole BIP-39 organizzate come un sistema di coordinate 8 × 16 × 16.
 
 Ogni lancio che registri è entropia che hai visto con i tuoi occhi. Nessun generatore elettronico di numeri casuali partecipa alla scelta delle tue parole.
@@ -32,7 +34,9 @@ Ogni parola BIP-39 è indirizzata da tre lanci del dado, conservando solo i risu
 
 Undici parole si lanciano per intero (11 × 11 = 121 bit). Per la dodicesima parola si lanciano solo D1 e D2 (altri 7 bit, per un totale di 128); la sua colonna codifica il *checksum* di 4 bit, quindi esattamente una delle 16 parole della riga selezionata completa un seme valido — la si trova per tentativi nell'assistente di inserimento del seme del portafoglio.
 
-I due esempi stampati nelle istruzioni sono verificati automaticamente da [`tools/verify_tutorial.py`](tools/verify_tutorial.py) rispetto alla lista di parole ufficiale e all'algoritmo di checksum.
+Le **edizioni estese** coprono inoltre i semi di 24 parole — parole 1–23 lanciate per intero (253 bit), solo D1 per la 24ª (altri 3 bit, 256 in totale; 70 lanci validi), con esattamente una parola valida per sezione di 256 parole — e la **scorciatoia del completamento dell'ultima parola**: strumenti come il flusso *final word* di SeedSigner, [SeedPicker](https://github.com/merland/seedpicker), il [BIP39 Recoverer offline di Coinplate](https://github.com/Coinplate/BIP39-Recoverer-Seed-Phrase-Recovery-Tool) o la [pagina di Ian Coleman](https://iancoleman.io/bip39/) (offline) elencano le ultime parole valide, delle quali ce ne sono sempre esattamente **128 per un seme di 12 parole (una per riga della tabella)** e **8 per uno di 24 (una per sezione)** — quindi un lancio di D1(+D2) sceglie la tua. Collegano inoltre l'articolo companion [*No Quiet Fix: Kerckhoffs' Lemma and the July 2026 Seed-Entropy Incident*](posts/kerckhoffs-lemma-coldcard.md).
+
+I due esempi stampati nelle istruzioni — e i conteggi di 128/8 candidate qui sopra — sono verificati automaticamente da [`tools/verify_tutorial.py`](tools/verify_tutorial.py) rispetto alla lista di parole ufficiale e all'algoritmo di checksum.
 
 **L'integrità della tabella è strutturale, non dichiarata.** In questo repository non esiste alcuna copia della lista di parole: la compilazione legge `bip-0039/english.txt` direttamente dal repository canonico [`bitcoin/bips`](https://github.com/bitcoin/bips), montato in `external/bips` come sottomodulo git fissato a un commit esatto e scaricato in modalità sparse, cosicché solo `bip-0039/` arriva su disco — così le parole della tabella stampata sono ancorate, tramite l'hashing stesso di git, alla storia upstream, e `make verify` verifica inoltre il file rispetto allo SHA-256 di riferimento del BIP-39. Verificalo tu stesso: `git submodule status` e `sha256sum external/bips/bip-0039/english.txt`.
 
@@ -74,7 +78,8 @@ La CI esegue `make verify` e ricompila tutti i PDF a ogni push, pubblicandoli co
 ```
 instructions/
   common/preamble.tex     layout condiviso, riquadri, spaziatura compatta
-  en/ es/ it/ pt-br/      un foglio autonomo per lingua
+  en/ es/ it/ pt-br/      foglio standard + esteso per lingua
+posts/                    articoli companion (Lemma di Kerckhoffs, ...)
 table/
   bip39-table.tex         computa l'intera tabella dalla lista alla compilazione
 external/

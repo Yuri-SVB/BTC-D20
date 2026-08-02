@@ -11,9 +11,14 @@ Checks, in order:
   4. Worked example 2 -- for the 11 words "never use this example because
      private key secret need phrase true" and D1=11,12 / D2=9, exactly one
      column completes a valid BIP-39 checksum: column 14, "random".
-  5. Every instruction edition mentions the same verified example words, so
-     translations cannot silently drift from the checked math.
-  6. Method entropy accounting: 11*11 + 7 = 128 bits.
+  5. Every instruction edition (standard and extended) mentions the same
+     verified example words and the official repository, so translations
+     cannot silently drift from the checked math.
+  6. The extended editions' wizard claims: an 11-word prefix always has
+     exactly 128 valid last words (one per table row); a 23-word prefix
+     always has exactly 8 (one per section); the linked companion post
+     exists.
+  7. Method entropy accounting: 11*11 + 7 = 128 bits; 23*11 + 3 = 256 bits.
 
 Exits non-zero on the first failure. No third-party dependencies.
 """
@@ -42,6 +47,24 @@ def word_at(words, d1, d2, d3):
     """Map die results (each 1..16) to a word: section (d1), row (d2), column (d3)."""
     section = (d1 - 1) // 2
     return words[section * 256 + (d2 - 1) * 16 + (d3 - 1)]
+
+
+def all_valid_finals(words, prefix):
+    """All 0-based table indices that complete a valid mnemonic after `prefix`
+    (11 words -> 4 checksum bits, 23 words -> 8 checksum bits)."""
+    ent = 0
+    for w in prefix:
+        ent = (ent << 11) | words.index(w)
+    cs_bits = 4 if len(prefix) == 11 else 8
+    ent_bytes = (len(prefix) * 11 + 11 - cs_bits) // 8
+    out = []
+    for idx in range(2048):
+        full = (ent << 11) | idx
+        entropy, cs = full >> cs_bits, full & ((1 << cs_bits) - 1)
+        digest = hashlib.sha256(entropy.to_bytes(ent_bytes, "big")).digest()
+        if digest[0] >> (8 - cs_bits) == cs:
+            out.append(idx)
+    return out
 
 
 def checksum_candidates(words, first11, d1, d2):
@@ -91,16 +114,34 @@ def main():
     check('example 2: unique valid 12th word is column 14, "random"',
           cands == [(14, "random")], f"got {cands}")
 
-    # 5. every edition quotes the verified examples
+    # 5. every edition quotes the verified examples and the official repo
     for lang in EDITIONS:
-        tex = (REPO / "instructions" / lang / f"instructions-{lang}.tex").read_text()
-        check(f"instructions-{lang} quotes verified example words",
-              "candy" in tex and "random" in tex and "12.random" in tex)
+        for stem in (f"instructions-{lang}", f"instructions-extended-{lang}"):
+            tex = (REPO / "instructions" / lang / f"{stem}.tex").read_text()
+            check(f"{stem} quotes verified example words",
+                  "candy" in tex and "random" in tex and "12.random" in tex)
+            check(f"{stem} links the official repository",
+                  "github.com/Yuri-SVB/BTC-D20" in tex)
 
-    # 6. entropy accounting
-    bits = 11 * 11 + 3 + 4
-    check("method yields exactly 128 bits of entropy", bits == 128,
-          f"11 words x 11 bits + 3 (D1) + 4 (D2) = {bits}")
+    # 6. wizard-completion claims printed in the extended editions
+    finals12 = all_valid_finals(words, first11)
+    check("12 words: exactly 128 valid last words, one per table row",
+          len(finals12) == 128 and len({i // 16 for i in finals12}) == 128,
+          f"got {len(finals12)}")
+    finals24 = all_valid_finals(words, ["abandon"] * 23)
+    check("24 words: exactly 8 valid last words, one per section",
+          len(finals24) == 8 and len({i // 256 for i in finals24}) == 8,
+          f"got {len(finals24)}")
+    check("companion post linked by the extended editions exists",
+          (REPO / "posts" / "kerckhoffs-lemma-coldcard.md").exists())
+
+    # 7. entropy accounting
+    bits12 = 11 * 11 + 3 + 4
+    bits24 = 23 * 11 + 3
+    check("12-word method yields exactly 128 bits of entropy", bits12 == 128,
+          f"11 words x 11 bits + 3 (D1) + 4 (D2) = {bits12}")
+    check("24-word method yields exactly 256 bits of entropy", bits24 == 256,
+          f"23 words x 11 bits + 3 (D1) = {bits24}")
 
     if failures:
         sys.exit(f"{failures} check(s) failed")

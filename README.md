@@ -2,9 +2,11 @@
 
 **English** · [Español](README.es.md) · [Italiano](README.it.md) · [Português (BR)](README.pt-BR.md)
 
+**Official repository:** [github.com/Yuri-SVB/BTC-D20](https://github.com/Yuri-SVB/BTC-D20)
+
 A printable two-page kit for generating a 12-word [BIP-39](https://github.com/bitcoin/bips/blob/master/bip-0039/bip-0039.mediawiki) seed phrase with nothing but a 20-sided die (D20), a pen, and paper:
 
-- **Instructions sheet** (front) — available in English, Spanish, Italian, and Brazilian Portuguese.
+- **Instructions sheet** (front) — available in English, Spanish, Italian, and Brazilian Portuguese, in a standard (12-word) and an extended edition (12 & 24 words, plus the last-word-completion shortcut).
 - **Lookup table** (back) — all 2048 BIP-39 words arranged as an 8 × 16 × 16 coordinate system.
 
 Every roll you keep is entropy you saw with your own eyes. No electronic random-number generator is involved in choosing your words.
@@ -32,7 +34,9 @@ Each BIP-39 word is addressed by three die rolls, keeping only results 1–16:
 
 Eleven words are rolled fully (11 × 11 = 121 bits). For the twelfth word only D1 and D2 are rolled (7 more bits, totaling 128); its column encodes the 4-bit checksum, so exactly one of the 16 words in the selected row completes a valid seed — found by trial and error in the wallet's seed-entry wizard.
 
-Both worked examples printed in the instructions are machine-verified by [`tools/verify_tutorial.py`](tools/verify_tutorial.py) against the official wordlist and checksum algorithm.
+The **extended editions** additionally cover 24-word seeds — words 1–23 fully rolled (253 bits), D1 only for the 24th (3 more bits, 256 total; 70 valid rolls), with exactly one valid word per 256-word section — and the **last-word-completion shortcut**: tools such as SeedSigner's *final word* flow, [SeedPicker](https://github.com/merland/seedpicker), [Coinplate's offline BIP39 Recoverer](https://github.com/Coinplate/BIP39-Recoverer-Seed-Phrase-Recovery-Tool) or [Ian Coleman's page](https://iancoleman.io/bip39/) (offline) list the valid final words, of which there are always exactly **128 for a 12-word seed (one per table row)** and **8 for a 24-word seed (one per section)** — so a D1(+D2) roll picks yours. They also link the companion post [*No Quiet Fix: Kerckhoffs' Lemma and the July 2026 Seed-Entropy Incident*](posts/kerckhoffs-lemma-coldcard.md).
+
+Both worked examples printed in the instructions — and the 128/8 candidate counts above — are machine-verified by [`tools/verify_tutorial.py`](tools/verify_tutorial.py) against the official wordlist and checksum algorithm.
 
 **Table integrity is structural, not asserted.** No copy of the word data exists in this repository: the build reads `bip-0039/english.txt` directly out of the canonical [`bitcoin/bips`](https://github.com/bitcoin/bips) repository, mounted at `external/bips` as a git submodule pinned to an exact commit and fetched sparse, so only `bip-0039/` ever lands on disk — the words in the printed table are anchored by git's own hashing to upstream history, and `make verify` additionally cross-checks the file against the BIP-39 reference SHA-256. Audit it yourself: `git submodule status` and `sha256sum external/bips/bip-0039/english.txt`.
 
@@ -74,7 +78,8 @@ CI runs `make verify` and rebuilds every PDF on each push, uploading them as art
 ```
 instructions/
   common/preamble.tex     shared layout, boxes, compact spacing
-  en/ es/ it/ pt-br/      one self-contained sheet per language
+  en/ es/ it/ pt-br/      standard + extended sheet per language
+posts/                    companion posts (Kerckhoffs' Lemma, ...)
 table/
   bip39-table.tex         computes the whole table from the wordlist at compile time
 external/

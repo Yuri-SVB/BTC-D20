@@ -2,9 +2,11 @@
 
 [English](README.md) · **Español** · [Italiano](README.it.md) · [Português (BR)](README.pt-BR.md)
 
+**Repositorio oficial:** [github.com/Yuri-SVB/BTC-D20](https://github.com/Yuri-SVB/BTC-D20)
+
 Un kit imprimible de dos páginas para generar una frase semilla [BIP-39](https://github.com/bitcoin/bips/blob/master/bip-0039/bip-0039.mediawiki) de 12 palabras usando solamente un dado de 20 caras (D20), bolígrafo y papel:
 
-- **Hoja de instrucciones** (anverso) — disponible en inglés, español, italiano y portugués de Brasil.
+- **Hoja de instrucciones** (anverso) — disponible en inglés, español, italiano y portugués de Brasil, en edición estándar (12 palabras) y extendida (12 y 24 palabras, más el atajo de autocompletado de la última palabra).
 - **Tabla de consulta** (reverso) — las 2048 palabras BIP-39 organizadas como un sistema de coordenadas 8 × 16 × 16.
 
 Cada tirada que registras es entropía que viste con tus propios ojos. Ningún generador electrónico de números aleatorios participa en la elección de tus palabras.
@@ -32,7 +34,9 @@ Cada palabra BIP-39 se direcciona con tres tiradas del dado, conservando solo lo
 
 Once palabras se tiran por completo (11 × 11 = 121 bits). Para la duodécima palabra solo se tiran D1 y D2 (7 bits más, totalizando 128); su columna codifica el *checksum* de 4 bits, de modo que exactamente una de las 16 palabras de la fila seleccionada completa una semilla válida — se encuentra por ensayo y error en el asistente de entrada de semilla de la billetera.
 
-Los dos ejemplos impresos en las instrucciones están verificados por máquina mediante [`tools/verify_tutorial.py`](tools/verify_tutorial.py) contra la lista de palabras oficial y el algoritmo de checksum.
+Las **ediciones extendidas** cubren además semillas de 24 palabras — palabras 1–23 tiradas por completo (253 bits), solo D1 para la 24ª (3 bits más, 256 en total; 70 tiradas válidas), con exactamente una palabra válida por sección de 256 palabras — y el **atajo de autocompletado de la última palabra**: herramientas como el flujo *final word* de SeedSigner, [SeedPicker](https://github.com/merland/seedpicker), el [BIP39 Recoverer offline de Coinplate](https://github.com/Coinplate/BIP39-Recoverer-Seed-Phrase-Recovery-Tool) o la [página de Ian Coleman](https://iancoleman.io/bip39/) (offline) listan las últimas palabras válidas, de las que siempre hay exactamente **128 para una semilla de 12 palabras (una por fila de la tabla)** y **8 para una de 24 (una por sección)** — así que una tirada de D1(+D2) elige la tuya. También enlazan el artículo compañero [*No Quiet Fix: Kerckhoffs' Lemma and the July 2026 Seed-Entropy Incident*](posts/kerckhoffs-lemma-coldcard.md).
+
+Los dos ejemplos impresos en las instrucciones — y los recuentos de 128/8 candidatas de arriba — están verificados por máquina mediante [`tools/verify_tutorial.py`](tools/verify_tutorial.py) contra la lista de palabras oficial y el algoritmo de checksum.
 
 **La integridad de la tabla es estructural, no afirmada.** No existe copia de la lista de palabras en este repositorio: la compilación lee `bip-0039/english.txt` directamente del repositorio canónico [`bitcoin/bips`](https://github.com/bitcoin/bips), montado en `external/bips` como submódulo git fijado a un commit exacto y descargado de forma dispersa, de modo que solo `bip-0039/` llega al disco — así las palabras de la tabla impresa quedan ancladas, por el propio hashing de git, al historial upstream, y `make verify` además coteja el archivo contra el SHA-256 de referencia del BIP-39. Audítalo tú mismo: `git submodule status` y `sha256sum external/bips/bip-0039/english.txt`.
 
@@ -74,7 +78,8 @@ La CI ejecuta `make verify` y recompila todos los PDF en cada push, publicándol
 ```
 instructions/
   common/preamble.tex     diseño compartido, cajas, espaciado compacto
-  en/ es/ it/ pt-br/      una hoja autocontenida por idioma
+  en/ es/ it/ pt-br/      hoja estándar + extendida por idioma
+posts/                    artículos compañeros (Lema de Kerckhoffs, ...)
 table/
   bip39-table.tex         computa la tabla completa desde la lista al compilar
 external/

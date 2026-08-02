@@ -13,7 +13,7 @@ LATEXMK  := latexmk -pdf -interaction=nonstopmode -halt-on-error
 DIST     := dist
 WORDLIST := external/bips/bip-0039/english.txt
 
-INSTRUCTION_PDFS := $(foreach l,$(LANGS),$(DIST)/instructions-$(l).pdf)
+INSTRUCTION_PDFS := $(foreach l,$(LANGS),$(DIST)/instructions-$(l).pdf $(DIST)/instructions-extended-$(l).pdf)
 
 .PHONY: all table instructions verify wordlist clean $(LANGS)
 
@@ -23,7 +23,7 @@ table: $(DIST)/bip39-table.pdf
 
 instructions: $(INSTRUCTION_PDFS)
 
-$(LANGS): %: $(DIST)/instructions-%.pdf
+$(LANGS): %: $(DIST)/instructions-%.pdf $(DIST)/instructions-extended-%.pdf
 
 $(DIST)/bip39-table.pdf: table/bip39-table.tex $(WORDLIST)
 	cd table && $(LATEXMK) bip39-table.tex
@@ -56,9 +56,17 @@ $(DIST)/instructions-$(1).pdf: instructions/$(1)/instructions-$(1).tex instructi
 endef
 $(foreach l,$(LANGS),$(eval $(call INSTR_RULE,$(l))))
 
+define EXT_RULE
+$(DIST)/instructions-extended-$(1).pdf: instructions/$(1)/instructions-extended-$(1).tex instructions/common/preamble.tex
+	cd instructions/$(1) && $(LATEXMK) instructions-extended-$(1).tex
+	@mkdir -p $(DIST)
+	cp instructions/$(1)/instructions-extended-$(1).pdf $$@
+endef
+$(foreach l,$(LANGS),$(eval $(call EXT_RULE,$(l))))
+
 verify:
 	python3 tools/verify_tutorial.py
 
 clean:
 	cd table && latexmk -C bip39-table.tex || true
-	for l in $(LANGS); do (cd instructions/$$l && latexmk -C instructions-$$l.tex) || true; done
+	for l in $(LANGS); do (cd instructions/$$l && latexmk -C instructions-$$l.tex && latexmk -C instructions-extended-$$l.tex) || true; done

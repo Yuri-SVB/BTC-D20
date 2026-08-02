@@ -1,0 +1,108 @@
+\documentclass[10pt]{article}
+\input{../common/preamble.tex}
+\extendedlayout
+\usepackage[brazilian]{babel}
+
+\begin{document}
+
+\section*{\faBitcoin~Gerando uma Frase Semente BIP39 com Dados de 20 Faces --- Edição Estendida: 12 e 24 Palavras}
+
+\footnotesize
+
+Uma frase semente mnemônica BIP39 fornece a entropia mestre para sua carteira de Bitcoin. Embora softwares possam gerar essa aleatoriedade, o uso de dados físicos oferece uma fonte de entropia transparente e verificável, que não depende de nenhum gerador de números aleatórios eletrônico. Esta edição estendida cobre o procedimento completo de 12 palavras, o procedimento de 24 palavras e o atalho de autocompletar a última palavra oferecido por várias ferramentas de semente. Usa a mesma tabela de consulta (verso).
+
+\begin{contextbox}{\faNewspaper~Por que entropia verificável? --- o incidente de julho de 2026}
+Em julho de 2026, mais de mil BTC foram varridos em minutos de carteiras cujas sementes haviam sido criadas por dispositivos Coldcard com um defeito de firmware existente desde 2021: a geração da semente usava silenciosamente um PRNG previsível de software em vez do RNG de hardware, entregando muito menos entropia do que o prometido. O fabricante corrigiu rapidamente --- e o próprio aviso oficial registra que sementes geradas com 50 ou mais rolagens honestas de dados nunca estiveram em risco. A lição não é sobre uma marca: \textbf{toda entropia eletrônica é invisível para o usuário}. Não dá para olhar um chip e enxergar se sua aleatoriedade está saudável --- mas dá para olhar um dado. Neste tutorial, cada bit da sua semente vem de rolagens que você confere com os próprios olhos.
+\end{contextbox}
+
+\subsection*{\faTable~Entendendo a Estrutura da Tabela}
+
+A tabela de referência está organizada como um sistema de consulta
+tridimensional. Cada uma das 2048 palavras do padrão BIP39 é identificada de forma única por três coordenadas, que chamaremos de D1, D2 e D3. A primeira coordenada (\textbf{D1}) seleciona uma das \textbf{8 seções} de página, a segunda (\textbf{D2}) seleciona uma das \textbf{16 linhas} dentro dessa seção, e a terceira (\textbf{D3}) seleciona uma das \textbf{16 colunas}. Juntos, esses três valores identificam exatamente uma palavra na tabela. As palavras da semente são sempre as do padrão BIP39 em inglês, aceitas por praticamente todas as carteiras.
+
+\subsection*{\faDiceD20~O Procedimento de Rolagem (12 Palavras)}
+
+Para cada uma das primeiras 11 palavras da sua frase semente, você deve obter três resultados válidos do dado. Role o dado e registre o resultado apenas se ele mostrar um valor entre 1 e 16 (inclusive). Se o dado mostrar 17, 18, 19 ou 20, \textbf{descarte essa rolagem} e role novamente até obter um resultado válido. Repita esse processo até ter três números válidos (D1, D2, D3) para a palavra atual.
+
+\begin{examplebox}{\faLightbulb~Exemplo de Geração de Palavra}
+Suponha que você esteja gerando sua quinta palavra da semente. Você rola o dado e obtém: 19 (inválido, role novamente), 3 (válido, D1 = \texttt{3,4}), 1 (válido, D2 = \texttt{1}), 20 (inválido, role novamente), 11 (válido, D3 = \texttt{11}). Suas coordenadas são ((3,4), 1, 11). Navegue até a seção 3,4 na tabela, encontre a linha 1 e então a coluna 11 para obter sua palavra: \texttt{candy}.
+\end{examplebox}
+
+\subsection*{\faPen~12ª Palavra}
+
+Para gerar a última palavra da sua semente BIP39, repita o procedimento para as 2 primeiras coordenadas igual ao realizado para as 11 primeiras palavras, selecionando, portanto, a seção e a linha da tabela. Neste ponto, existe exatamente uma única palavra na linha selecionada (com 16 alternativas) que formará uma semente BIP39 válida. A determinação da coluna para a última palavra \textbf{não} será feita por rolamento de dados, e sim por tentativa e erro no wizard de input da semente da sua carteira --- de preferência em um dispositivo \textit{air gapped}: ele rejeitará as 15 candidatas inválidas e aceitará a única válida.
+
+\begin{examplebox}{\faLightbulb~Exemplo de Geração da Última Palavra}
+Suponha que suas 11 primeiras palavras sejam, em ordem: \textit{``never, use, this, example, because, private, key, secret, need, phrase,} e \textit{true''}.
+
+Agora você gerará sua 12ª palavra da semente. Você rola o dado e obtém: 18 (inválido, role novamente), 12 (válido, D1 = \texttt{11,12}), 9 (válido, D2 = \texttt{9}). Com isso, a sua 12ª palavra já está determinada: teste uma por uma as palavras da linha \texttt{9} da seção \texttt{11,12} e você verá que a palavra da coluna \texttt{14}, \texttt{random}, (e apenas ela), formará, juntamente com as 11 primeiras, nesta ordem, uma semente BIP39 válida:
+
+\vspace{0.5em}
+\texttt{1.never 2.use 3.this 4.example 5.because 6.private 7.key 8.secret 9.need 10.phrase 11.true 12.random}. \faCheckCircle
+\end{examplebox}
+
+\subsection*{\faMagic~Atalho: Wizards com Autocompletar da Última Palavra}
+
+Várias ferramentas de semente completam a última palavra para você: dadas todas as palavras anteriores, elas listam exatamente as candidatas que tornam o \textit{checksum} válido --- por exemplo o fluxo \textit{final word} do \seedsignerlink{}, a calculadora de última palavra do \seedpickerlink{}, o BIP39 Recoverer offline da \coinplatelink{} ou a página BIP39 de \iancolemanlink{} (usada offline). Para uma semente de 12 palavras existem sempre exatamente \textbf{128 últimas palavras válidas: precisamente uma em cada uma das $8\times16=128$ linhas} da tabela. Então, em vez da tentativa e erro coluna por coluna: role D1 e D2 como de costume e tome, entre as candidatas do wizard, \textbf{a que estiver na sua seção e linha roladas}. Mesma palavra, mesma entropia, menos digitação.
+
+\subsection*{\faLayerGroup~24 Palavras}
+
+Para uma semente de 24 palavras (256 bits de entropia), gere as palavras 1--23 exatamente como as 11 primeiras acima: três rolagens válidas cada ($23\times11=253$ bits). Para a \textbf{24ª palavra, role apenas D1}, selecionando a seção (mais 3 bits --- 256 no total). A linha e a coluna ficam então fixadas pelo \textit{checksum} de 8 bits: \textbf{exatamente uma palavra em toda a sua seção de 256 palavras} completa uma semente válida. Encontre-a de uma de duas formas:
+
+\begin{itemize}[itemsep=1pt]
+ \item \textbf{Tentativa e erro} no wizard da carteira, ao longo da seção rolada (até 256 tentativas --- tedioso, mas totalmente offline); ou
+ \item \textbf{Autocompletar da última palavra:} um wizard como os acima oferecerá exatamente \textbf{8 candidatas válidas --- uma por seção}. Sua rolagem de D1 escolhe a seção; tome a candidata que estiver nela.
+\end{itemize}
+
+\begin{examplebox}{\faLightbulb~Exemplo de 24 Palavras: a Frase do Exemplo, Duplicada}
+Pegue o exemplo de 12 palavras acima e duplique-o para obter as palavras 1--23; para a 24ª, suponha que você role: 17 (inválido, role novamente), 11 (válido, D1 = \texttt{11,12}). Entre as 8 candidatas do wizard (ou por tentativa e erro ao longo da seção 11,12), exatamente uma palavra dessa seção --- \texttt{polar}, linha \texttt{4}, coluna \texttt{12} --- completa uma semente válida de 24 palavras:
+
+\vspace{0.5em}
+\texttt{never use this example because private key secret need phrase true random}\\
+\texttt{never use this example because private key secret need phrase true polar}~\faCheckCircle
+\vspace{0.5em}
+
+Note o sacrifício: a duplicação não pode manter \texttt{random} como 24ª palavra, porque o checksum de 8 bits dos 256 bits completos difere do checksum de 4 bits que tornava \texttt{random} válida com 12 palavras. O checksum reivindica a última palavra --- e cai em \texttt{polar}, a única palavra da \emph{mesma seção} (D1 = \texttt{11,12}) de \texttt{random} cuja combinação com as 23 anteriores o satisfaz.
+\end{examplebox}
+
+\subsection*{\faListOl~Resumo}
+
+\begin{itemize}[itemsep=1pt]
+ \item Role um dado de 20 faces. \textbf{Descarte} resultados \textbf{17, 18, 19} ou \textbf{20}
+ \item Cada rolamento válido (de 1 a 16 inclusive) especifica uma coordenada de uma palavra
+ \item Cada uma das \textbf{8 seções (D1)} corresponde a \textbf{2} resultados válidos possíveis; cada uma das \textbf{16 linhas (D2)} e \textbf{16 colunas (D3)}, a \textbf{1}
+ \item \textbf{12 palavras:} 11 palavras roladas por completo e depois apenas D1 + D2; \textbf{35 rolagens válidas} produzem os \textbf{128 bits} completos. A última palavra: tentativa e erro na linha, ou a candidata do wizard na sua linha rolada (existem \textbf{128} candidatas válidas, uma por linha)
+ \item \textbf{24 palavras:} 23 palavras roladas por completo e depois apenas D1; \textbf{70 rolagens válidas} produzem os \textbf{256 bits} completos. A última palavra: tentativa e erro na seção, ou a candidata do wizard na sua seção rolada (existem \textbf{8} candidatas válidas, uma por seção)
+ \item Os bits de \textit{checksum} (4 ou 8) são sempre por conta da carteira --- nunca rolados
+\end{itemize}
+
+\begin{warnbox}{\faExclamationTriangle~Avisos de Segurança}
+\begin{itemize}[itemsep=1pt]
+ \item Nunca use a frase semente deste exemplo acima: porque, para as suas chaves privadas serem secretas, você precisa que a sua frase semente seja verdadeiramente randômica
+ \item Realize este procedimento em um local privado. Não fotografe nem registre digitalmente suas rolagens ou resultados intermediários. Escreva sua frase semente final em papel e guarde-a em local seguro
+ \item Só use ferramentas de autocompletar em dispositivos \textit{air gapped} de confiança --- elas veem a sua semente inteira. Para máxima segurança, apenas digite sua frase semente em dispositivos air gapped de sua confiança e propriedade
+ \item Se você suspeita que uma semente sua foi gerada por software ou firmware defeituoso (como no incidente de julho de 2026), gere uma semente nova com este método e transfira seus fundos para ela: atualizar o firmware \textbf{não} conserta uma semente fraca já existente
+\end{itemize}
+\end{warnbox}
+
+\begin{infobox}{\faInfoCircle~Saiba Mais}
+\begin{minipage}[c]{0.8\textwidth}
+Este tutorial é de autoria de \textbf{Yuri da Silva Villas Boas} --- autor da BIP-450 (Formosa) e criador do protocolo Great Wall. Repositório oficial (fontes, PDFs em 4 idiomas, verificação automática): \repolink --- ou escaneie o QR code ao lado.
+
+\begin{description}[itemsep=1pt]
+ \item [Artigo curto:] por que um aviso discreto era impossível --- Kerckhoffs e o incidente de julho de 2026: \paperlink no repositório
+ \item [Mais tutoriais, cursos e comunidade:] \lpflink --- e siga-nos no Twitter/X, Nostr e Telegram
+ \item [Great Wall:] Gerar uma semente forte é só o primeiro passo; protegê-la contra roubo e coerção é o resto. Great Wall é nosso protocolo de software livre para autocustódia resistente a coerção: \gwlink
+\end{description}
+
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.15\textwidth}
+\centering
+\repoqr
+\end{minipage}
+\end{infobox}
+
+\editionsfooterflow{Rev. 2026-08 --- Estendida}
+
+\end{document}

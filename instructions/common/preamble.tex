@@ -1,0 +1,105 @@
+% Shared preamble for all language editions of the instructions sheet.
+% Language files load this first, then their babel option, then the content.
+\usepackage[a4paper, margin=1cm]{geometry}
+
+% Per-edition page layout, called right after this file is input.
+% Standard editions are a strict one-pager (table on the verso): margins as
+% generous as the longest translation allows. Extended editions have no
+% one-page commitment: roomier margins, standard two-page flow.
+\newcommand{\standardlayout}{%
+  \geometry{hmargin=1.3cm, vmargin=1.1cm}%
+  % One-pager: whatever height the language leaves unused is distributed
+  % across the section rhythm instead of pooling above the footer --
+  % same-order fil glue shares page slack proportionally (the footer's
+  % fill is demoted to 1fil below for exactly this reason). Minimum
+  % spacings stay compact, so the tightest translations still fit; the
+  % roomier ones breathe automatically.
+  \titlespacing*{\subsection}{0pt}{5pt plus 0.5fil}{2pt}%
+  \tcbset{before skip=6pt plus 0.3fil, after skip=6pt plus 0.3fil}}
+\newcommand{\extendedlayout}{%
+  \geometry{hmargin=1.7cm, vmargin=1.5cm}%
+  % Room to breathe: the two-page flow affords a more generous rhythm
+  % between sections than the one-pagers' compact spacing.
+  \titlespacing*{\subsection}{0pt}{12pt}{5pt}%
+  \tcbset{before skip=9pt, after skip=9pt}}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{qrcode}
+\usepackage{fontawesome5}
+\usepackage{titlesec}
+\pagestyle{empty}
+
+% Compact vertical rhythm so each edition fits a single A4 recto.
+\titlespacing*{\section}{0pt}{0pt}{4pt}
+\titlespacing*{\subsection}{0pt}{5pt}{2pt}
+
+% Break quality, handled by TeX's badness machinery rather than manual
+% \newpage tweaks: a negative penalty before every subsection makes
+% breaking right before a section strictly cheaper than breaking a few
+% lines into it, so a section that would leave a stub at a page bottom
+% moves to the next page whole. \addpenalty (not \filbreak or a bare
+% \penalty, which both perturb heading spacing) inserts the breakpoint
+% while preserving surrounding glue exactly, so this is a strict no-op
+% on editions that fit their page. Widow/orphan lines are forbidden
+% outright.
+% The mechanism is a glue-preserving \filbreak: \vfil enters the page
+% builder's stretch accounting, so breaking at the -200 point has badness
+% zero (the fil absorbs the empty bottom) while breaking a few lines into
+% the section costs real badness. Unlike plain \filbreak, the trailing
+% glue is unskipped and restored around the trio, so heading spacing is
+% untouched and the whole device is a strict no-op wherever no page break
+% is needed. (\raggedbottom alone cannot do this: its fil is added by the
+% output routine, after the breakpoint has already been chosen.)
+\newskip\bipSecBreakSkip
+\newcommand{\bipSecBreak}{%
+  \par
+  \ifdim\lastskip=0pt
+    \vfil\penalty-200\vfilneg
+  \else
+    \bipSecBreakSkip\lastskip
+    \vskip-\lastskip
+    \vfil\penalty-200\vfilneg
+    \vskip\bipSecBreakSkip
+  \fi}
+\let\bipOrigSubsection\subsection
+\renewcommand{\subsection}{\bipSecBreak\bipOrigSubsection}
+\clubpenalty=10000
+\widowpenalty=10000
+\setlist{itemsep=1pt, topsep=2pt, parsep=0pt}
+\tcbset{boxsep=1pt, top=2pt, bottom=2pt, left=4pt, right=4pt,
+        before skip=6pt, after skip=6pt}
+
+% Box styles used by every edition.
+\newtcolorbox{contextbox}[1]{colback=red!4, colframe=red!55!black, title={#1}}
+\newtcolorbox{examplebox}[1]{colback=yellow!15, colframe=yellow!65!black, title={#1}}
+\newtcolorbox{warnbox}[1]{colback=yellow!10, colframe=orange!90, title={#1}}
+\newtcolorbox{infobox}[1]{colback=blue!5, colframe=blue!50, title={#1}}
+
+% Footer line naming the sibling editions.
+\newcommand{\editionsline}[1]{%
+  {\centering\scriptsize\color{black!60}#1 --- EN \textperiodcentered{} ES
+  \textperiodcentered{} IT \textperiodcentered{} PT-BR\par}}
+% One-pagers pin it toward the page bottom; kept glue-cheap (no center
+% environment, zero-minimum stretch) so it never pushes the page over.
+% First-order fil, not \fill: it must share slack with the stretchable
+% section rhythm of \standardlayout, not dominate it.
+\newcommand{\editionsfooter}[1]{%
+  \par\vspace*{0pt plus 1fil}\nopagebreak\editionsline{#1}}
+% Multi-page editions let it follow the content instead.
+\newcommand{\editionsfooterflow}[1]{\par\vspace{1.5em}\editionsline{#1}}
+
+% Clickable links for digital copies; print output is unchanged.
+% hyperref is loaded last by convention (we use no \ref/bookmarks).
+\usepackage[hidelinks]{hyperref}
+\newcommand{\repourl}{https://github.com/Yuri-SVB/BTC-D20}
+\newcommand{\repolink}{\href{\repourl}{\texttt{github.com/Yuri-SVB/BTC-D20}}}
+\newcommand{\repoqr}{\href{\repourl}{\qrcode[height=2.2cm]{https://github.com/Yuri-SVB/BTC-D20}}}
+\newcommand{\lpflink}{\href{https://www.loudproudandfree.com}{\texttt{www.loudproudandfree.com}}}
+\newcommand{\gwlink}{\href{https://github.com/Yuri-SVB}{\texttt{github.com/Yuri-SVB}}}
+\newcommand{\paperlink}{\href{\repourl/blob/main/posts/kerckhoffs-lemma-coldcard.md}{\texttt{posts/kerckhoffs-lemma-coldcard.md}}}
+% Last-word-completion tools cited in the extended editions (GitHub sources).
+\newcommand{\seedsignerlink}{\href{https://github.com/SeedSigner/seedsigner}{SeedSigner}}
+\newcommand{\seedpickerlink}{\href{https://github.com/merland/seedpicker}{SeedPicker}}
+\newcommand{\coinplatelink}{\href{https://github.com/Coinplate/BIP39-Recoverer-Seed-Phrase-Recovery-Tool}{Coinplate}}
+\newcommand{\iancolemanlink}{\href{https://github.com/iancoleman/bip39}{Ian Coleman}}

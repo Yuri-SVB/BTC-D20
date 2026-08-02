@@ -1,0 +1,107 @@
+\documentclass[10pt]{article}
+\input{../common/preamble.tex}
+\extendedlayout
+\usepackage[spanish, es-noshorthands]{babel}
+
+\begin{document}
+
+\section*{\faBitcoin~Generando una Frase Semilla BIP39 con un Dado de 20 Caras --- Edición Extendida: 12 y 24 Palabras}
+
+\footnotesize
+
+Una frase semilla mnemónica BIP39 proporciona la entropía maestra de tu billetera de Bitcoin. Aunque el software puede generar esa aleatoriedad, el uso de dados físicos ofrece una fuente de entropía transparente y verificable, que no depende de ningún generador electrónico de números aleatorios. Esta edición extendida cubre el procedimiento completo de 12 palabras, el procedimiento de 24 palabras y el atajo de autocompletado de la última palabra que ofrecen varias herramientas de semilla. Usa la misma tabla de consulta (al dorso).
+
+\begin{contextbox}{\faNewspaper~¿Por qué entropía verificable? --- el incidente de julio de 2026}
+En julio de 2026, más de mil BTC fueron vaciados en minutos de billeteras cuyas semillas habían sido creadas por dispositivos Coldcard con un defecto de firmware existente desde 2021: la generación de la semilla usaba silenciosamente un PRNG predecible de software en lugar del RNG de hardware, entregando mucha menos entropía de la prometida. El fabricante corrigió rápidamente --- y su propio aviso oficial señala que las semillas generadas con 50 o más tiradas honestas de dados nunca estuvieron en riesgo. La lección no trata de una marca: \textbf{toda entropía electrónica es invisible para el usuario}. No puedes mirar un chip y ver si su aleatoriedad está sana --- pero sí puedes mirar un dado. Con este tutorial, cada bit de tu semilla proviene de tiradas que verificas con tus propios ojos.
+\end{contextbox}
+
+\subsection*{\faTable~Entendiendo la Estructura de la Tabla}
+
+La tabla de referencia está organizada como un sistema de consulta tridimensional. Cada una de las 2048 palabras del estándar BIP39 se identifica de forma única mediante tres coordenadas, que llamaremos D1, D2 y D3. La primera coordenada (\textbf{D1}) selecciona una de las \textbf{8 secciones} de la página, la segunda (\textbf{D2}) selecciona una de las \textbf{16 filas} dentro de esa sección, y la tercera (\textbf{D3}) selecciona una de las \textbf{16 columnas}. Juntos, estos tres valores identifican exactamente una palabra de la tabla. Las palabras de la semilla son siempre las del estándar BIP39 en inglés, aceptadas por prácticamente todas las billeteras.
+
+\subsection*{\faDiceD20~El Procedimiento de Tiradas (12 Palabras)}
+
+Para cada una de las primeras 11 palabras de tu frase semilla, debes obtener tres resultados válidos del dado. Tira el dado y registra el resultado solo si muestra un valor entre 1 y 16 (inclusive). Si el dado muestra 17, 18, 19 o 20, \textbf{descarta esa tirada} y vuelve a tirar hasta obtener un resultado válido. Repite este proceso hasta tener tres números válidos (D1, D2, D3) para la palabra actual.
+
+\begin{examplebox}{\faLightbulb~Ejemplo de Generación de una Palabra}
+Supón que estás generando la quinta palabra de tu semilla. Tiras el dado y obtienes: 19 (inválido, tira de nuevo), 3 (válido, D1 = \texttt{3,4}), 1 (válido, D2 = \texttt{1}), 20 (inválido, tira de nuevo), 11 (válido, D3 = \texttt{11}). Tus coordenadas son ((3,4), 1, 11). Navega hasta la sección 3,4 de la tabla, busca la fila 1 y luego la columna 11 para obtener tu palabra: \texttt{candy}.
+\end{examplebox}
+
+\subsection*{\faPen~La 12ª Palabra}
+
+Para generar la última palabra de tu semilla BIP39, repite el procedimiento para las 2 primeras coordenadas igual que hiciste con las primeras 11 palabras, seleccionando así la sección y la fila de la tabla. En este punto, existe exactamente una única palabra en la fila seleccionada (entre 16 alternativas) que formará una semilla BIP39 válida. La columna de la última palabra \textbf{no} se determina tirando el dado, sino por ensayo y error en el asistente de entrada de semilla de tu billetera --- preferiblemente en un dispositivo \textit{air gapped}: rechazará las 15 candidatas inválidas y aceptará la única válida.
+
+\begin{examplebox}{\faLightbulb~Ejemplo de Generación de la Última Palabra}
+Supón que tus primeras 11 palabras son, en orden: \textit{«never, use, this, example, because, private, key, secret, need, phrase,} y \textit{true»}.
+
+Ahora generarás tu 12ª palabra. Tiras el dado y obtienes: 18 (inválido, tira de nuevo), 12 (válido, D1 = \texttt{11,12}), 9 (válido, D2 = \texttt{9}). Con eso, tu 12ª palabra ya está determinada: prueba una por una las palabras de la fila \texttt{9} de la sección \texttt{11,12} y verás que la palabra de la columna \texttt{14}, \texttt{random}, (y solo ella), junto con las 11 primeras, en este orden, forma una semilla BIP39 válida:
+
+\vspace{0.5em}
+\texttt{1.never 2.use 3.this 4.example 5.because 6.private 7.key 8.secret 9.need 10.phrase 11.true 12.random}. \faCheckCircle
+\end{examplebox}
+
+\subsection*{\faMagic~Atajo: Asistentes con Autocompletado de la Última Palabra}
+
+Varias herramientas de semilla completan la última palabra por ti: dadas todas las palabras anteriores, listan exactamente las candidatas que hacen válido el \textit{checksum} --- por ejemplo el flujo \textit{final word} de \seedsignerlink{}, la calculadora de última palabra de \seedpickerlink{}, el BIP39 Recoverer offline de \coinplatelink{} o la página BIP39 de \iancolemanlink{} (usada offline). Para una semilla de 12 palabras existen siempre exactamente \textbf{128 últimas palabras válidas: precisamente una en cada una de las $8\times16=128$ filas} de la tabla. Así que, en vez del ensayo y error columna por columna: tira D1 y D2 como de costumbre y toma, entre las candidatas del asistente, \textbf{la que esté en tu sección y fila tiradas}. La misma palabra, la misma entropía, menos tecleo.
+
+\subsection*{\faLayerGroup~24 Palabras}
+
+Para una semilla de 24 palabras (256 bits de entropía), genera las palabras 1--23 exactamente como las 11 primeras de arriba: tres tiradas válidas cada una ($23\times11=253$ bits). Para la \textbf{24ª palabra, tira solo D1}, seleccionando la sección (3 bits más --- 256 en total). La fila y la columna quedan entonces fijadas por el \textit{checksum} de 8 bits: \textbf{exactamente una palabra en toda tu sección de 256 palabras} completa una semilla válida. Encuéntrala de una de estas dos formas:
+
+\begin{itemize}[itemsep=1pt]
+ \item \textbf{Ensayo y error} en el asistente de la billetera, a lo largo de la sección tirada (hasta 256 intentos --- tedioso, pero totalmente offline); o
+ \item \textbf{Autocompletado de la última palabra:} un asistente como los de arriba ofrecerá exactamente \textbf{8 candidatas válidas --- una por sección}. Tu tirada de D1 elige la sección; toma la candidata que esté en ella.
+\end{itemize}
+
+\begin{examplebox}{\faLightbulb~Ejemplo de 24 Palabras: la Frase del Ejemplo, Duplicada}
+Toma el ejemplo de 12 palabras de arriba y duplícalo para obtener las palabras 1--23; para la 24ª, supón que tiras: 17 (inválido, tira de nuevo), 11 (válido, D1 = \texttt{11,12}). Entre las 8 candidatas del asistente (o por ensayo y error a lo largo de la sección 11,12), exactamente una palabra de esa sección --- \texttt{polar}, fila \texttt{4}, columna \texttt{12} --- completa una semilla válida de 24 palabras:
+
+\vspace{0.5em}
+\texttt{never use this example because private key secret need phrase true random}\\
+\texttt{never use this example because private key secret need phrase true polar}~\faCheckCircle
+\vspace{0.5em}
+
+Nota el sacrificio: la duplicación no puede conservar \texttt{random} como 24ª palabra, porque el checksum de 8 bits de los 256 bits completos difiere del checksum de 4 bits que hacía válida a \texttt{random} con 12 palabras. El checksum reclama la última palabra --- y cae en \texttt{polar}, la única palabra de la \emph{misma sección} (D1 = \texttt{11,12}) que \texttt{random} cuya combinación con las 23 anteriores lo satisface.
+\end{examplebox}
+
+\subsection*{\faListOl~Resumen}
+
+\begin{itemize}[itemsep=1pt]
+ \item Tira un dado de 20 caras. \textbf{Descarta} los resultados \textbf{17, 18, 19} o \textbf{20}
+ \item Cada tirada válida (de 1 a 16 inclusive) especifica una coordenada de una palabra
+ \item Cada una de las \textbf{8 secciones (D1)} corresponde a \textbf{2} resultados válidos posibles; cada una de las \textbf{16 filas (D2)} y \textbf{16 columnas (D3)}, a \textbf{1}
+ \item \textbf{12 palabras:} 11 palabras tiradas por completo y luego solo D1 + D2; \textbf{35 tiradas válidas} producen los \textbf{128 bits} completos. La última palabra: ensayo y error en la fila, o la candidata del asistente en tu fila tirada (existen \textbf{128} candidatas válidas, una por fila)
+ \item \textbf{24 palabras:} 23 palabras tiradas por completo y luego solo D1; \textbf{70 tiradas válidas} producen los \textbf{256 bits} completos. La última palabra: ensayo y error en la sección, o la candidata del asistente en tu sección tirada (existen \textbf{8} candidatas válidas, una por sección)
+ \item Los bits de \textit{checksum} (4 u 8) corren siempre por cuenta de la billetera --- nunca se tiran
+\end{itemize}
+
+\begin{warnbox}{\faExclamationTriangle~Advertencias de Seguridad}
+\begin{itemize}[itemsep=1pt]
+ \item Nunca uses la frase semilla de este ejemplo de arriba: porque, para que tus claves privadas sean secretas, necesitas que tu frase semilla sea verdaderamente aleatoria
+ \item Realiza este procedimiento en un lugar privado. No fotografíes ni registres digitalmente tus tiradas ni resultados intermedios. Escribe tu frase semilla final en papel y guárdala en un lugar seguro
+ \item Usa las herramientas de autocompletado únicamente en dispositivos \textit{air gapped} de confianza --- ven tu semilla entera. Para máxima seguridad, escribe tu frase semilla únicamente en dispositivos air gapped de confianza y de tu propiedad
+ \item Si sospechas que una de tus semillas fue generada por software o firmware defectuoso (como en el incidente de julio de 2026), genera una semilla nueva con este método y transfiere tus fondos a ella: actualizar el firmware \textbf{no} repara una semilla débil ya existente
+\end{itemize}
+\end{warnbox}
+
+\begin{infobox}{\faInfoCircle~Para Saber Más}
+\begin{minipage}[c]{0.8\textwidth}
+Este tutorial es obra de \textbf{Yuri da Silva Villas Boas} --- autor de la BIP-450 (Formosa) y creador del protocolo Great Wall. Repositorio oficial (fuentes, PDF en 4 idiomas, verificación automática): \repolink --- o escanea el código QR al lado.
+
+\begin{description}[itemsep=1pt]
+ \item [Artículo corto:] por qué un aviso discreto era imposible --- Kerckhoffs y el incidente de julio de 2026: \paperlink en el repositorio
+ \item [Más tutoriales, cursos y comunidad:] \lpflink --- y síguenos en Twitter/X, Nostr y Telegram
+ \item [Great Wall:] Generar una semilla fuerte es solo el primer paso; protegerla contra robo y coerción es el resto. Great Wall es nuestro protocolo de software libre para autocustodia resistente a la coerción: \gwlink
+\end{description}
+
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.15\textwidth}
+\centering
+\repoqr
+\end{minipage}
+\end{infobox}
+
+\editionsfooterflow{Rev. 2026-08 --- Extendida}
+
+\end{document}

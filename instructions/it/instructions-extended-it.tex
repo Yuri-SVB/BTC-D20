@@ -1,0 +1,107 @@
+\documentclass[10pt]{article}
+\input{../common/preamble.tex}
+\extendedlayout
+\usepackage[italian]{babel}
+
+\begin{document}
+
+\section*{\faBitcoin~Generare una Frase Seme BIP39 con un Dado a 20 Facce --- Edizione Estesa: 12 e 24 Parole}
+
+\footnotesize
+
+Una frase seme mnemonica BIP39 fornisce l'entropia principale del tuo portafoglio Bitcoin. Il software può generare questa casualità al posto tuo, ma i dadi fisici offrono una fonte di entropia trasparente e verificabile, che non dipende da alcun generatore elettronico di numeri casuali. Questa edizione estesa copre la procedura completa a 12 parole, la procedura a 24 parole e la scorciatoia del completamento dell'ultima parola offerta da vari strumenti per semi. Usa la stessa tabella di consultazione (sul retro).
+
+\begin{contextbox}{\faNewspaper~Perché entropia verificabile? --- l'incidente di luglio 2026}
+A luglio 2026, più di mille BTC sono stati svuotati in pochi minuti da portafogli i cui semi erano stati creati da dispositivi Coldcard affetti da un difetto del firmware presente dal 2021: la generazione del seme usava silenziosamente un PRNG software prevedibile invece dell'RNG hardware, fornendo molta meno entropia del promesso. Il produttore ha corretto rapidamente --- e il suo stesso avviso ufficiale segnala che i semi generati con 50 o più lanci onesti di dadi non sono mai stati a rischio. La lezione non riguarda un marchio: \textbf{ogni entropia elettronica è invisibile all'utente}. Non puoi guardare un chip e vedere se la sua casualità è sana --- ma puoi guardare un dado. Con questo tutorial, ogni bit del tuo seme proviene da lanci che verifichi con i tuoi occhi.
+\end{contextbox}
+
+\subsection*{\faTable~Capire la Struttura della Tabella}
+
+La tabella di riferimento è organizzata come un sistema di consultazione tridimensionale. Ognuna delle 2048 parole dello standard BIP39 è identificata in modo univoco da tre coordinate, che chiameremo D1, D2 e D3. La prima coordinata (\textbf{D1}) seleziona una delle \textbf{8 sezioni} della pagina, la seconda (\textbf{D2}) seleziona una delle \textbf{16 righe} all'interno di quella sezione, e la terza (\textbf{D3}) seleziona una delle \textbf{16 colonne}. Insieme, questi tre valori identificano esattamente una parola della tabella. Le parole del seme sono sempre quelle dello standard BIP39 in inglese, accettate praticamente da ogni portafoglio.
+
+\subsection*{\faDiceD20~La Procedura di Lancio (12 Parole)}
+
+Per ognuna delle prime 11 parole della tua frase seme, devi ottenere tre risultati validi dal dado. Lancia il dado e registra il risultato solo se mostra un valore tra 1 e 16 (inclusi). Se il dado mostra 17, 18, 19 o 20, \textbf{scarta quel lancio} e rilancia finché non ottieni un risultato valido. Ripeti questo processo finché non hai tre numeri validi (D1, D2, D3) per la parola corrente.
+
+\begin{examplebox}{\faLightbulb~Esempio di Generazione di una Parola}
+Supponi di stare generando la quinta parola del tuo seme. Lanci il dado e ottieni: 19 (non valido, rilancia), 3 (valido, D1 = \texttt{3,4}), 1 (valido, D2 = \texttt{1}), 20 (non valido, rilancia), 11 (valido, D3 = \texttt{11}). Le tue coordinate sono ((3,4), 1, 11). Vai alla sezione 3,4 della tabella, trova la riga 1 e poi la colonna 11 per ottenere la tua parola: \texttt{candy}.
+\end{examplebox}
+
+\subsection*{\faPen~La 12ª Parola}
+
+Per generare l'ultima parola del tuo seme BIP39, ripeti la procedura per le prime 2 coordinate esattamente come fatto per le prime 11 parole, selezionando quindi la sezione e la riga della tabella. A questo punto, esiste esattamente una sola parola nella riga selezionata (su 16 alternative) che formerà un seme BIP39 valido. La colonna dell'ultima parola \textbf{non} si determina lanciando il dado, ma per tentativi nell'assistente di inserimento del seme del tuo portafoglio --- preferibilmente su un dispositivo \textit{air gapped}: rifiuterà le 15 candidate non valide e accetterà l'unica valida.
+
+\begin{examplebox}{\faLightbulb~Esempio di Generazione dell'Ultima Parola}
+Supponi che le tue prime 11 parole siano, in ordine: \textit{``never, use, this, example, because, private, key, secret, need, phrase,} e \textit{true''}.
+
+Ora genererai la tua 12ª parola. Lanci il dado e ottieni: 18 (non valido, rilancia), 12 (valido, D1 = \texttt{11,12}), 9 (valido, D2 = \texttt{9}). Con ciò, la tua 12ª parola è già determinata: prova una per una le parole della riga \texttt{9} della sezione \texttt{11,12} e vedrai che la parola della colonna \texttt{14}, \texttt{random}, (e solo quella), insieme alle prime 11, in questo ordine, forma un seme BIP39 valido:
+
+\vspace{0.5em}
+\texttt{1.never 2.use 3.this 4.example 5.because 6.private 7.key 8.secret 9.need 10.phrase 11.true 12.random}. \faCheckCircle
+\end{examplebox}
+
+\subsection*{\faMagic~Scorciatoia: Assistenti con Completamento dell'Ultima Parola}
+
+Diversi strumenti per semi completano l'ultima parola al posto tuo: date tutte le parole precedenti, elencano esattamente le candidate che rendono valido il \textit{checksum} --- per esempio il flusso \textit{final word} di \seedsignerlink{}, il calcolatore dell'ultima parola di \seedpickerlink{}, il BIP39 Recoverer offline di \coinplatelink{} o la pagina BIP39 di \iancolemanlink{} (usata offline). Per un seme di 12 parole esistono sempre esattamente \textbf{128 ultime parole valide: precisamente una in ognuna delle $8\times16=128$ righe} della tabella. Quindi, invece dei tentativi colonna per colonna: lancia D1 e D2 come al solito e prendi, tra le candidate dell'assistente, \textbf{quella che si trova nella tua sezione e riga lanciate}. Stessa parola, stessa entropia, meno digitazione.
+
+\subsection*{\faLayerGroup~24 Parole}
+
+Per un seme di 24 parole (256 bit di entropia), genera le parole 1--23 esattamente come le prime 11 qui sopra: tre lanci validi ciascuna ($23\times11=253$ bit). Per la \textbf{24ª parola, lancia solo D1}, selezionando la sezione (altri 3 bit --- 256 in totale). La riga e la colonna restano allora fissate dal \textit{checksum} di 8 bit: \textbf{esattamente una parola nell'intera tua sezione di 256 parole} completa un seme valido. Trovala in uno di questi due modi:
+
+\begin{itemize}[itemsep=1pt]
+ \item \textbf{Per tentativi} nell'assistente del portafoglio, lungo la sezione lanciata (fino a 256 tentativi --- tedioso, ma completamente offline); oppure
+ \item \textbf{Completamento dell'ultima parola:} un assistente come quelli sopra offrirà esattamente \textbf{8 candidate valide --- una per sezione}. Il tuo lancio di D1 sceglie la sezione; prendi la candidata che vi si trova.
+\end{itemize}
+
+\begin{examplebox}{\faLightbulb~Esempio a 24 Parole: la Frase dell'Esempio, Duplicata}
+Prendi l'esempio a 12 parole qui sopra e duplicalo per ottenere le parole 1--23; per la 24ª, supponi di lanciare: 17 (non valido, rilancia), 11 (valido, D1 = \texttt{11,12}). Tra le 8 candidate dell'assistente (o per tentativi lungo la sezione 11,12), esattamente una parola di quella sezione --- \texttt{polar}, riga \texttt{4}, colonna \texttt{12} --- completa un seme valido di 24 parole:
+
+\vspace{0.5em}
+\texttt{never use this example because private key secret need phrase true random}\\
+\texttt{never use this example because private key secret need phrase true polar}~\faCheckCircle
+\vspace{0.5em}
+
+Nota il sacrificio: la duplicazione non può conservare \texttt{random} come 24ª parola, perché il checksum a 8 bit dei 256 bit completi differisce dal checksum a 4 bit che rendeva \texttt{random} valida a 12 parole. Il checksum reclama l'ultima parola --- e cade su \texttt{polar}, l'unica parola della \emph{stessa sezione} (D1 = \texttt{11,12}) di \texttt{random} la cui combinazione con le 23 precedenti lo soddisfa.
+\end{examplebox}
+
+\subsection*{\faListOl~Riepilogo}
+
+\begin{itemize}[itemsep=1pt]
+ \item Lancia un dado a 20 facce. \textbf{Scarta} i risultati \textbf{17, 18, 19} o \textbf{20}
+ \item Ogni lancio valido (da 1 a 16 inclusi) specifica una coordinata di una parola
+ \item Ognuna delle \textbf{8 sezioni (D1)} corrisponde a \textbf{2} possibili risultati validi; ognuna delle \textbf{16 righe (D2)} e \textbf{16 colonne (D3)}, a \textbf{1}
+ \item \textbf{12 parole:} 11 parole lanciate per intero e poi solo D1 + D2; \textbf{35 lanci validi} producono tutti i \textbf{128 bit}. L'ultima parola: per tentativi nella riga, oppure la candidata dell'assistente nella tua riga lanciata (esistono \textbf{128} candidate valide, una per riga)
+ \item \textbf{24 parole:} 23 parole lanciate per intero e poi solo D1; \textbf{70 lanci validi} producono tutti i \textbf{256 bit}. L'ultima parola: per tentativi nella sezione, oppure la candidata dell'assistente nella tua sezione lanciata (esistono \textbf{8} candidate valide, una per sezione)
+ \item I bit di \textit{checksum} (4 oppure 8) sono sempre compito del portafoglio --- mai lanciati
+\end{itemize}
+
+\begin{warnbox}{\faExclamationTriangle~Avvertenze di Sicurezza}
+\begin{itemize}[itemsep=1pt]
+ \item Non usare mai la frase seme di questo esempio qui sopra: perché, affinché le tue chiavi private restino segrete, hai bisogno che la tua frase seme sia veramente casuale
+ \item Esegui questa procedura in un luogo privato. Non fotografare né registrare digitalmente i tuoi lanci o i risultati intermedi. Scrivi la tua frase seme finale su carta e conservala in un luogo sicuro
+ \item Usa gli strumenti di completamento solo su dispositivi \textit{air gapped} fidati --- vedono il tuo seme per intero. Per la massima sicurezza, digita la tua frase seme solo su dispositivi air gapped fidati e di tua proprietà
+ \item Se sospetti che un tuo seme sia stato generato da software o firmware difettoso (come nell'incidente di luglio 2026), genera un seme nuovo con questo metodo e trasferisci lì i tuoi fondi: aggiornare il firmware \textbf{non} ripara un seme debole già esistente
+\end{itemize}
+\end{warnbox}
+
+\begin{infobox}{\faInfoCircle~Per Saperne di Più}
+\begin{minipage}[c]{0.8\textwidth}
+Questo tutorial è opera di \textbf{Yuri da Silva Villas Boas} --- autore della BIP-450 (Formosa) e creatore del protocollo Great Wall. Repository ufficiale (sorgenti, PDF in 4 lingue, verifica automatica): \repolink --- oppure scansiona il codice QR a fianco.
+
+\begin{description}[itemsep=1pt]
+ \item [Articolo breve:] perché un avviso discreto era impossibile --- Kerckhoffs e l'incidente di luglio 2026: \paperlink nel repository
+ \item [Altri tutorial, corsi e comunità:] \lpflink --- e seguici su Twitter/X, Nostr e Telegram
+ \item [Great Wall:] Generare un seme forte è solo il primo passo; proteggerlo da furto e coercizione è il resto. Great Wall è il nostro protocollo di software libero per l'autocustodia resistente alla coercizione: \gwlink
+\end{description}
+
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.15\textwidth}
+\centering
+\repoqr
+\end{minipage}
+\end{infobox}
+
+\editionsfooterflow{Rev. 2026-08 --- Estesa}
+
+\end{document}

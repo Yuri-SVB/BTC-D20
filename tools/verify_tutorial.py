@@ -1,0 +1,171 @@
+#!/usr/bin/env python3
+"""Verify the tutorial's data and worked examples against the BIP-39 spec.
+
+Checks, in order:
+  1. Wordlist integrity: the file served by the commit-pinned bitcoin/bips
+     submodule has 2048 unique, sorted words and matches the BIP-39
+     reference SHA-256 (an independent cross-check on the submodule pin).
+  2. The table source computes the table from that submodule file (no copy
+     of the word data exists in this repository).
+  3. Worked example 1 -- coordinates ((3,4), 1, 11) resolve to "candy".
+  4. Worked example 2 -- for the 11 words "never use this example because
+     private key secret need phrase true" and D1=11,12 / D2=9, exactly one
+     column completes a valid BIP-39 checksum: column 14, "random".
+  5. Every instruction edition (standard and extended) mentions the same
+     verified example words and the official repository, so translations
+     cannot silently drift from the checked math.
+  6. The extended editions' wizard claims: an 11-word prefix always has
+     exactly 128 valid last words (one per table row); a 23-word prefix
+     always has exactly 8 (one per section). Worked 24-word example: for
+     the duplicated 12-word example phrase, the unique valid 24th word in
+     "random"'s section (11,12) is "polar" at row 4, column 12. The
+     linked companion post exists.
+  7. Method entropy accounting: 11*11 + 7 = 128 bits; 23*11 + 3 = 256 bits.
+
+Exits non-zero on the first failure. No third-party dependencies.
+"""
+
+import hashlib
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+WORDLIST = REPO / "external" / "bips" / "bip-0039" / "english.txt"
+WORDLIST_SHA256 = "2f5eed53a4727b4bf8880d8f3f199efc90e58503646d9ff8eff3a2ed3b24dbda"
+EDITIONS = ["en", "es", "it", "pt-br"]
+
+failures = 0
+
+
+def check(label, ok, detail=""):
+    global failures
+    mark = "ok" if ok else "FAIL"
+    print(f"[{mark:>4}] {label}" + (f" -- {detail}" if detail else ""))
+    if not ok:
+        failures += 1
+
+
+def word_at(words, d1, d2, d3):
+    """Map die results (each 1..16) to a word: section (d1), row (d2), column (d3)."""
+    section = (d1 - 1) // 2
+    return words[section * 256 + (d2 - 1) * 16 + (d3 - 1)]
+
+
+def all_valid_finals(words, prefix):
+    """All 0-based table indices that complete a valid mnemonic after `prefix`
+    (11 words -> 4 checksum bits, 23 words -> 8 checksum bits)."""
+    ent = 0
+    for w in prefix:
+        ent = (ent << 11) | words.index(w)
+    cs_bits = 4 if len(prefix) == 11 else 8
+    ent_bytes = (len(prefix) * 11 + 11 - cs_bits) // 8
+    out = []
+    for idx in range(2048):
+        full = (ent << 11) | idx
+        entropy, cs = full >> cs_bits, full & ((1 << cs_bits) - 1)
+        digest = hashlib.sha256(entropy.to_bytes(ent_bytes, "big")).digest()
+        if digest[0] >> (8 - cs_bits) == cs:
+            out.append(idx)
+    return out
+
+
+def checksum_candidates(words, first11, d1, d2):
+    """Return the (column, word) pairs in section/row (d1, d2) that complete a
+    valid 12-word BIP-39 mnemonic after `first11`."""
+    ent121 = 0
+    for w in first11:
+        ent121 = (ent121 << 11) | words.index(w)
+    section, row = (d1 - 1) // 2, d2
+    out = []
+    for col in range(16):
+        idx = section * 256 + (row - 1) * 16 + col
+        full = (ent121 << 11) | idx          # 132 bits: 128 entropy + 4 checksum
+        entropy, cs = full >> 4, full & 0xF
+        digest = hashlib.sha256(entropy.to_bytes(16, "big")).digest()
+        if digest[0] >> 4 == cs:
+            out.append((col + 1, words[idx]))
+    return out
+
+
+def main():
+    # 1. wordlist integrity (file comes from the pinned bitcoin/bips submodule)
+    if not WORDLIST.exists():
+        sys.exit("wordlist missing -- run: git submodule update --init --depth 1")
+    data = WORDLIST.read_bytes()
+    check("submodule wordlist sha256 matches the BIP-39 reference value",
+          hashlib.sha256(data).hexdigest() == WORDLIST_SHA256)
+    words = data.decode("ascii").split()
+    check("wordlist has 2048 unique words",
+          len(words) == 2048 and len(set(words)) == 2048)
+    check("wordlist is in official (sorted) order", words == sorted(words))
+
+    # 2. the table is computed from the submodule wordlist at compile time
+    table_tex = (REPO / "table" / "bip39-table.tex").read_text()
+    check("table source reads the wordlist from the bitcoin/bips submodule",
+          "external/bips/bip-0039/english.txt" in table_tex)
+
+    # 3. worked example 1
+    w = word_at(words, 3, 1, 11)
+    check('example 1: ((3,4), 1, 11) -> "candy"', w == "candy", f"got {w!r}")
+
+    # 4. worked example 2
+    first11 = "never use this example because private key secret need phrase true".split()
+    check("example 2: all 11 example words are BIP-39 words",
+          all(w in words for w in first11))
+    cands = checksum_candidates(words, first11, 12, 9)
+    check('example 2: unique valid 12th word is column 14, "random"',
+          cands == [(14, "random")], f"got {cands}")
+
+    # 5. every edition quotes the verified examples and the official repo
+    # (the URL itself is centralized in the shared preamble's link macros)
+    preamble = (REPO / "instructions" / "common" / "preamble.tex").read_text()
+    check("shared preamble defines the official repository URL",
+          "github.com/Yuri-SVB/BTC-D20" in preamble)
+    for lang in EDITIONS:
+        for stem in (f"instructions-{lang}", f"instructions-extended-{lang}"):
+            tex = (REPO / "instructions" / lang / f"{stem}.tex").read_text()
+            check(f"{stem} quotes verified example words",
+                  "candy" in tex and "random" in tex and "12.random" in tex)
+            check(f"{stem} links the official repository",
+                  "\\repolink" in tex and "\\repoqr" in tex)
+
+    # 6. wizard-completion claims printed in the extended editions
+    finals12 = all_valid_finals(words, first11)
+    check("12 words: exactly 128 valid last words, one per table row",
+          len(finals12) == 128 and len({i // 16 for i in finals12}) == 128,
+          f"got {len(finals12)}")
+    prefix23 = first11 + ["random"] + first11
+    finals24 = all_valid_finals(words, prefix23)
+    check("24 words: exactly 8 valid last words, one per section",
+          len(finals24) == 8 and len({i // 256 for i in finals24}) == 8,
+          f"got {len(finals24)}")
+    sec_random = words.index("random") // 256
+    in_sec = [i for i in finals24 if i // 256 == sec_random]
+    check('24-word example: unique valid word in section 11,12 is "polar" '
+          "at row 4, column 12",
+          [(words[i], (i % 256) // 16 + 1, i % 16 + 1) for i in in_sec]
+          == [("polar", 4, 12)],
+          f"got {[(words[i], (i % 256) // 16 + 1, i % 16 + 1) for i in in_sec]}")
+    for lang in EDITIONS:
+        tex = (REPO / "instructions" / lang /
+               f"instructions-extended-{lang}.tex").read_text()
+        check(f"instructions-extended-{lang} quotes the 24-word example",
+              "polar" in tex and "true polar" in tex)
+    check("companion post linked by the extended editions exists",
+          (REPO / "posts" / "kerckhoffs-lemma-coldcard.md").exists())
+
+    # 7. entropy accounting
+    bits12 = 11 * 11 + 3 + 4
+    bits24 = 23 * 11 + 3
+    check("12-word method yields exactly 128 bits of entropy", bits12 == 128,
+          f"11 words x 11 bits + 3 (D1) + 4 (D2) = {bits12}")
+    check("24-word method yields exactly 256 bits of entropy", bits24 == 256,
+          f"23 words x 11 bits + 3 (D1) = {bits24}")
+
+    if failures:
+        sys.exit(f"{failures} check(s) failed")
+    print("all checks passed")
+
+
+if __name__ == "__main__":
+    main()

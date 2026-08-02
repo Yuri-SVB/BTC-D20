@@ -115,13 +115,17 @@ def main():
           cands == [(14, "random")], f"got {cands}")
 
     # 5. every edition quotes the verified examples and the official repo
+    # (the URL itself is centralized in the shared preamble's link macros)
+    preamble = (REPO / "instructions" / "common" / "preamble.tex").read_text()
+    check("shared preamble defines the official repository URL",
+          "github.com/Yuri-SVB/BTC-D20" in preamble)
     for lang in EDITIONS:
         for stem in (f"instructions-{lang}", f"instructions-extended-{lang}"):
             tex = (REPO / "instructions" / lang / f"{stem}.tex").read_text()
             check(f"{stem} quotes verified example words",
                   "candy" in tex and "random" in tex and "12.random" in tex)
             check(f"{stem} links the official repository",
-                  "github.com/Yuri-SVB/BTC-D20" in tex)
+                  "\\repolink" in tex and "\\repoqr" in tex)
 
     # 6. wizard-completion claims printed in the extended editions
     finals12 = all_valid_finals(words, first11)

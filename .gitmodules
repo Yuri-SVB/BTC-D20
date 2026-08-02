@@ -1,0 +1,5 @@
+[submodule "external/bips"]
+	path = external/bips
+	url = https://github.com/bitcoin/bips.git
+	branch = master
+	shallow = true

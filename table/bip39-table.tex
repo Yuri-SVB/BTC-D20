@@ -1,102 +1,148 @@
+% BIP-39 D20 lookup table -- 8 sections (D1) x 16 rows (D2) x 16 columns (D3).
+%
+% Fully programmatic: at compile time this file reads bip-0039/english.txt
+% straight out of the canonical bitcoin/bips repository (mounted at
+% external/bips as a commit-pinned git submodule), derives every cell's word
+% and color from its (section, row, column) coordinates, and assembles the
+% table with document-level loops. There are no generated intermediates, no
+% hand-encoded word macros and no copy of the word data in this repository.
+%
+% Color system ("tricolor"): three parity bits select the shade of each cell,
+% so the eye can track a coordinate across the dense grid:
+%   column parity  -> hue        (odd columns yellow, even columns orange)
+%   row parity     -> brightness (large step)
+%   section parity -> brightness (small step)
+% Row labels use the same brightness map at full saturation; the D1 column is
+% shaded by section parity with the label spanning its 16 rows. Tune the look
+% in the Parameters block below.
 \documentclass[10pt]{article}
 \usepackage[a4paper, margin=0.3cm]{geometry}
-\usepackage{nicematrix}
-\usepackage{tabularray}
-\usepackage{booktabs}
 \usepackage{multirow}
-\usepackage{makecell}
 \usepackage{array}
 \usepackage[table]{xcolor}
-\usepackage{xfp}
-\usepackage{colortbl}
 
-% Integer division (quotient)
-\newcommand{\intdiv}[2]{%
-  \fpeval{floor(#1 / #2)}%
-}
+% ---------------------------- Parameters -----------------------------------
+\newcommand{\HueOddCol}{50}     % hue of odd columns (yellow)
+\newcommand{\HueEvenCol}{25}    % hue of even columns (orange)
+\newcommand{\SatCell}{0.8}      % saturation of data cells and section labels
+\newcommand{\SatLabel}{1}       % saturation of row labels and header cells
+\newcommand{\BriMax}{1}         % brightness at even row / even section
+\newcommand{\BriRowStep}{0.15}  % brightness drop on odd rows
+\newcommand{\BriSecStep}{0.05}  % brightness drop on odd sections
+\newcommand{\CellPad}{2pt}      % horizontal padding inside cells (\tabcolsep)
 
-% Remainder (modulo)
-\newcommand{\intmod}[2]{%
-  \fpeval{#1 - #2 * floor(#1 / #2)}%
-}
+\ExplSyntaxOn
 
-\newcommand{\cellnum}{-1}
-\newcommand{\paritya}{0}
-\newcommand{\parityb}{0}
-\newcommand{\parityc}{0}
-\newcommand{\nextcellarithm}{%
-  \xdef\cellnum{\fpeval{\cellnum + 1}}%
-  \csname cell\cellnum\endcsname%
-  \xdef\paritya{\intmod{\cellnum}{2}}
-  \xdef\parityb{\intmod{\intdiv{\cellnum}{16}}{2}}
-  \xdef\parityc{\intmod{\intdiv{\cellnum}{256}}{2}}
-}
+% ------------------------- Read the wordlist -------------------------------
+\ior_new:N \g_bip_ior
+\seq_new:N \g_bip_words_seq
+\ior_open:NnF \g_bip_ior { ../external/bips/bip-0039/english.txt }
+  { \msg_set:nnn {bip} {err} {Cannot~open~the~bitcoin/bips~wordlist~--~run:~
+      git~submodule~update~--init~--depth~1}
+    \msg_fatal:nn {bip} {err} }
+\ior_str_map_inline:Nn \g_bip_ior
+  { \tl_if_blank:nF {#1} { \seq_gput_right:Nn \g_bip_words_seq {#1} } }
+\ior_close:N \g_bip_ior
+\int_compare:nNnF { \seq_count:N \g_bip_words_seq } = { 2048 }
+  { \msg_set:nnn {bip} {err} {Wordlist~must~contain~exactly~2048~words}
+    \msg_fatal:nn {bip} {err} }
 
-\newcommand{\prevcellarithm}{%
-  \xdef\cellnum{\fpeval{\cellnum - 1}}%
-  \csname cell\cellnum\endcsname%
-  \xdef\paritya{\intmod{\cellnum}{2}}
-  \xdef\parityb{\intmod{\intdiv{\cellnum}{16}}{2}}
-  \xdef\parityc{\intmod{\intdiv{\cellnum}{256}}{2}}
-}
+% Word at (section, row, column), all 1-based.
+\cs_new:Npn \bip_word:nnn #1#2#3
+  { \seq_item:Nn \g_bip_words_seq { (#1-1)*256 + (#2-1)*16 + #3 } }
 
-\input{colors.tex}
+% ------------------------- Define the colors -------------------------------
+% Names encode parity bits: c<col><row><sec>, r<row><sec>, s<sec>, h<col>.
+\cs_new:Npn \bip_bri:nn #1#2   % row parity, section parity -> brightness
+  { \fp_eval:n { \BriMax - #1*\BriRowStep - #2*\BriSecStep } }
+\cs_new_protected:Npn \bip_defcolor:nnnn #1#2#3#4  % name, hue, sat, brightness
+  { \exp_args:Nnnx \definecolor {#1} {Hsb} { #2, #3, #4 } }
+\cs_new_protected:Npn \bip_make_colors:nn #1#2     % row parity, section parity
+  {
+    \bip_defcolor:nnnn { c0#1#2 } { \HueOddCol  } { \SatCell  } { \bip_bri:nn {#1}{#2} }
+    \bip_defcolor:nnnn { c1#1#2 } { \HueEvenCol } { \SatCell  } { \bip_bri:nn {#1}{#2} }
+    \bip_defcolor:nnnn { r#1#2  } { \HueOddCol  } { \SatLabel } { \bip_bri:nn {#1}{#2} }
+  }
+\bip_make_colors:nn {0}{0} \bip_make_colors:nn {0}{1}
+\bip_make_colors:nn {1}{0} \bip_make_colors:nn {1}{1}
+\bip_defcolor:nnnn { s0 } { \HueOddCol } { \SatCell  } { \bip_bri:nn {0}{0} }
+\bip_defcolor:nnnn { s1 } { \HueOddCol } { \SatCell  } { \bip_bri:nn {0}{1} }
+\bip_defcolor:nnnn { h0 } { \HueOddCol } { \SatLabel } { \BriMax }
+\bip_defcolor:nnnn { h1 } { \HueEvenCol } { \SatLabel } { \BriMax }
 
-\newcommand{\mycel}[1]{\multicolumn{1}{l  }{\hspace{-7  pt} \nextcell #1}}
-\newcommand{\myrow}[1]{\multicolumn{1}{|c|}{\nextrow #1 \prevcellarithm}}
-\newcommand{\mybrow}[1]{\multirowcell{16}{\nextbrow \textbf{#1} \prevcellarithm}}
-% \newcommand{\mybrow}[1]{}
-% \newcommand{\mybrow}[1]{\SetCell[r=16]{bg=yellow} \nextbrow #1 \prevcellarithm}
-% \newcommand{\mybrow}[1]{\Block[fill=yellow]{16-1}{#1}}
+% ------------------------- Assemble the table ------------------------------
+\tl_new:N \g_bip_header_tl
+\tl_new:N \g_bip_body_tl
+\tl_new:N \l_bip_row_tl
 
-\newcommand{\nextcell}{\nextcellarithm \tricolor{\paritya}{\parityb}{\parityc}}
-\newcommand{\nextrow}{\nextcellarithm \tricolorrow{\paritya}{\parityb}{\parityc}}
-\newcommand{\nextbrow}{\nextcellarithm \tricolorbrow{\paritya}{\parityb}{\parityc}}
+% Header row: coordinate legend, then the 16 column numbers.
+\tl_gset:Nn \g_bip_header_tl { D1 & D2$\backslash$D3 }
+\int_step_inline:nn {16}
+  {
+    \tl_gput_right:Nx \g_bip_header_tl
+      {
+        & \exp_not:N \multicolumn {1}
+          { c \int_compare:nNnT {#1} = {16} { | } }
+          { \exp_not:N \cellcolor { h \int_eval:n { \int_mod:nn {#1-1} {2} } } #1 }
+      }
+  }
 
-\input{bip39-words.tex}
+% One data row. The D1 cell is shaded on every row; on the section's last row
+% it also carries the label, spanning upward over the 15 rows already painted
+% (\multirow with a negative count -- the standard colortbl-safe pattern).
+\cs_new_protected:Npn \bip_row:nn #1#2   % section, row (1-based)
+  {
+    \tl_set:Nx \l_bip_row_tl
+      {
+        \exp_not:N \cellcolor { s \int_eval:n { \int_mod:nn {#1-1} {2} } }
+        \int_compare:nNnT {#2} = {16}
+          {
+            \exp_not:N \multirow {-16} {*}
+              { \exp_not:N \textbf { \int_eval:n {2*#1-1} , \int_eval:n {2*#1} } }
+          }
+        & \exp_not:N \cellcolor
+            { r \int_eval:n { \int_mod:nn {#2-1} {2} }
+                \int_eval:n { \int_mod:nn {#1-1} {2} } } #2
+      }
+    \int_step_inline:nn {16}
+      {
+        \tl_put_right:Nx \l_bip_row_tl
+          {
+            & \exp_not:N \cellcolor
+                { c \int_eval:n { \int_mod:nn {##1-1} {2} }
+                    \int_eval:n { \int_mod:nn {#2-1}  {2} }
+                    \int_eval:n { \int_mod:nn {#1-1}  {2} } }
+            \bip_word:nnn {#1} {#2} {##1}
+          }
+      }
+    \tl_put_right:Nn \l_bip_row_tl { \\ }
+    \tl_gput_right:Nx \g_bip_body_tl { \exp_not:V \l_bip_row_tl }
+  }
+
+\int_step_inline:nn {8}
+  {
+    \int_step_inline:nn {16} { \bip_row:nn {#1} {##1} }
+    \tl_gput_right:Nn \g_bip_body_tl { \hline }
+  }
+
+\cs_new_eq:NN \BipTableHeader \g_bip_header_tl
+\cs_new_eq:NN \BipTableBody   \g_bip_body_tl
+\ExplSyntaxOff
+
+\pagestyle{empty}
 
 \begin{document}
 
 \begin{table}[h]
 \centering
 \tiny
-\setlength{\tabcolsep}{0pt}
-% \caption{16×16×8 Three-dimensional data}
-
-% \begin{tabular}{|l|lllllllllllllllll|}
-\begin{tabular}{|llllllllllllllllll|}
-% \begin{NiceTabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}[hvlines]
-% \begin{tblr}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
-
-% \toprule
+\setlength{\tabcolsep}{\CellPad}
+\begin{tabular}{|c|c|llllllllllllllll|}
 \hline
-\multicolumn{1}{|c|}{D1} & 
-\multicolumn{1}{|c|}{D2$\backslash$D3} & 
-\multicolumn{1}{|c}{\cellcolor{oddcol} 1} & 
-\multicolumn{1}{c}{\cellcolor{evencol} 2} & 
-\multicolumn{1}{c}{\cellcolor{oddcol} 3} & 
-\multicolumn{1}{c}{\cellcolor{evencol} 4} & 
-\multicolumn{1}{c}{\cellcolor{oddcol} 5} & 
-\multicolumn{1}{c}{\cellcolor{evencol} 6} & 
-\multicolumn{1}{c}{\cellcolor{oddcol} 7} & 
-\multicolumn{1}{c}{\cellcolor{evencol} 8} & 
-\multicolumn{1}{c}{\cellcolor{oddcol} 9} & 
-\multicolumn{1}{c}{\cellcolor{evencol} 10} & 
-\multicolumn{1}{c}{\cellcolor{oddcol} 11} & 
-\multicolumn{1}{c}{\cellcolor{evencol} 12} & 
-\multicolumn{1}{c}{\cellcolor{oddcol} 13} & 
-\multicolumn{1}{c}{\cellcolor{evencol} 14} & 
-\multicolumn{1}{c}{\cellcolor{oddcol} 15} & 
-\multicolumn{1}{c|}{\cellcolor{evencol} 16} \\
+\BipTableHeader \\
 \hline
-%\midrule
-
-\input{table-struct.tex}
-
+\BipTableBody
 \end{tabular}
-% \end{NiceTabular}
-% \end{tblr}
-
 \end{table}
 
 \end{document}

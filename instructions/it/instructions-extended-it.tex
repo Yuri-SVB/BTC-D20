@@ -53,6 +53,17 @@ Per un seme di 24 parole (256 bit di entropia), genera le parole 1--23 esattamen
  \item \textbf{Completamento dell'ultima parola:} un assistente come quelli sopra offrirà esattamente \textbf{8 candidate valide --- una per sezione}. Il tuo lancio di D1 sceglie la sezione; prendi la candidata che vi si trova.
 \end{itemize}
 
+\begin{examplebox}{\faLightbulb~Esempio a 24 Parole: la Frase dell'Esempio, Duplicata}
+Prendi l'esempio a 12 parole qui sopra e duplicalo per ottenere le parole 1--23; per la 24ª, supponi di lanciare: 17 (non valido, rilancia), 11 (valido, D1 = \texttt{11,12}). Tra le 8 candidate dell'assistente (o per tentativi lungo la sezione 11,12), esattamente una parola di quella sezione --- \texttt{polar}, riga \texttt{4}, colonna \texttt{12} --- completa un seme valido di 24 parole:
+
+\vspace{0.5em}
+\texttt{never use this example because private key secret need phrase true random}\\
+\texttt{never use this example because private key secret need phrase true polar}~\faCheckCircle
+\vspace{0.5em}
+
+Nota il sacrificio: la duplicazione non può conservare \texttt{random} come 24ª parola, perché il checksum a 8 bit dei 256 bit completi differisce dal checksum a 4 bit che rendeva \texttt{random} valida a 12 parole. Il checksum reclama l'ultima parola --- e cade su \texttt{polar}, l'unica parola della \emph{stessa sezione} (D1 = \texttt{11,12}) di \texttt{random} la cui combinazione con le 23 precedenti lo soddisfa.
+\end{examplebox}
+
 \subsection*{\faListOl~Riepilogo}
 
 \begin{itemize}[itemsep=1pt]

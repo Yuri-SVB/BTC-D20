@@ -53,6 +53,17 @@ Para una semilla de 24 palabras (256 bits de entropía), genera las palabras 1--
  \item \textbf{Autocompletado de la última palabra:} un asistente como los de arriba ofrecerá exactamente \textbf{8 candidatas válidas --- una por sección}. Tu tirada de D1 elige la sección; toma la candidata que esté en ella.
 \end{itemize}
 
+\begin{examplebox}{\faLightbulb~Ejemplo de 24 Palabras: la Frase del Ejemplo, Duplicada}
+Toma el ejemplo de 12 palabras de arriba y duplícalo para obtener las palabras 1--23; para la 24ª, supón que tiras: 17 (inválido, tira de nuevo), 11 (válido, D1 = \texttt{11,12}). Entre las 8 candidatas del asistente (o por ensayo y error a lo largo de la sección 11,12), exactamente una palabra de esa sección --- \texttt{polar}, fila \texttt{4}, columna \texttt{12} --- completa una semilla válida de 24 palabras:
+
+\vspace{0.5em}
+\texttt{never use this example because private key secret need phrase true random}\\
+\texttt{never use this example because private key secret need phrase true polar}~\faCheckCircle
+\vspace{0.5em}
+
+Nota el sacrificio: la duplicación no puede conservar \texttt{random} como 24ª palabra, porque el checksum de 8 bits de los 256 bits completos difiere del checksum de 4 bits que hacía válida a \texttt{random} con 12 palabras. El checksum reclama la última palabra --- y cae en \texttt{polar}, la única palabra de la \emph{misma sección} (D1 = \texttt{11,12}) que \texttt{random} cuya combinación con las 23 anteriores lo satisface.
+\end{examplebox}
+
 \subsection*{\faListOl~Resumen}
 
 \begin{itemize}[itemsep=1pt]

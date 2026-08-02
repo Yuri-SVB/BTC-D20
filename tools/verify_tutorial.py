@@ -16,8 +16,10 @@ Checks, in order:
      cannot silently drift from the checked math.
   6. The extended editions' wizard claims: an 11-word prefix always has
      exactly 128 valid last words (one per table row); a 23-word prefix
-     always has exactly 8 (one per section); the linked companion post
-     exists.
+     always has exactly 8 (one per section). Worked 24-word example: for
+     the duplicated 12-word example phrase, the unique valid 24th word in
+     "random"'s section (11,12) is "polar" at row 4, column 12. The
+     linked companion post exists.
   7. Method entropy accounting: 11*11 + 7 = 128 bits; 23*11 + 3 = 256 bits.
 
 Exits non-zero on the first failure. No third-party dependencies.
@@ -132,10 +134,23 @@ def main():
     check("12 words: exactly 128 valid last words, one per table row",
           len(finals12) == 128 and len({i // 16 for i in finals12}) == 128,
           f"got {len(finals12)}")
-    finals24 = all_valid_finals(words, ["abandon"] * 23)
+    prefix23 = first11 + ["random"] + first11
+    finals24 = all_valid_finals(words, prefix23)
     check("24 words: exactly 8 valid last words, one per section",
           len(finals24) == 8 and len({i // 256 for i in finals24}) == 8,
           f"got {len(finals24)}")
+    sec_random = words.index("random") // 256
+    in_sec = [i for i in finals24 if i // 256 == sec_random]
+    check('24-word example: unique valid word in section 11,12 is "polar" '
+          "at row 4, column 12",
+          [(words[i], (i % 256) // 16 + 1, i % 16 + 1) for i in in_sec]
+          == [("polar", 4, 12)],
+          f"got {[(words[i], (i % 256) // 16 + 1, i % 16 + 1) for i in in_sec]}")
+    for lang in EDITIONS:
+        tex = (REPO / "instructions" / lang /
+               f"instructions-extended-{lang}.tex").read_text()
+        check(f"instructions-extended-{lang} quotes the 24-word example",
+              "polar" in tex and "true polar" in tex)
     check("companion post linked by the extended editions exists",
           (REPO / "posts" / "kerckhoffs-lemma-coldcard.md").exists())
 

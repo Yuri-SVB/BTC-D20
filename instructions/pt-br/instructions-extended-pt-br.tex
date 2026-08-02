@@ -54,6 +54,17 @@ Para uma semente de 24 palavras (256 bits de entropia), gere as palavras 1--23 e
  \item \textbf{Autocompletar da última palavra:} um wizard como os acima oferecerá exatamente \textbf{8 candidatas válidas --- uma por seção}. Sua rolagem de D1 escolhe a seção; tome a candidata que estiver nela.
 \end{itemize}
 
+\begin{examplebox}{\faLightbulb~Exemplo de 24 Palavras: a Frase do Exemplo, Duplicada}
+Pegue o exemplo de 12 palavras acima e duplique-o para obter as palavras 1--23; para a 24ª, suponha que você role: 17 (inválido, role novamente), 11 (válido, D1 = \texttt{11,12}). Entre as 8 candidatas do wizard (ou por tentativa e erro ao longo da seção 11,12), exatamente uma palavra dessa seção --- \texttt{polar}, linha \texttt{4}, coluna \texttt{12} --- completa uma semente válida de 24 palavras:
+
+\vspace{0.5em}
+\texttt{never use this example because private key secret need phrase true random}\\
+\texttt{never use this example because private key secret need phrase true polar}~\faCheckCircle
+\vspace{0.5em}
+
+Note o sacrifício: a duplicação não pode manter \texttt{random} como 24ª palavra, porque o checksum de 8 bits dos 256 bits completos difere do checksum de 4 bits que tornava \texttt{random} válida com 12 palavras. O checksum reivindica a última palavra --- e cai em \texttt{polar}, a única palavra da \emph{mesma seção} (D1 = \texttt{11,12}) de \texttt{random} cuja combinação com as 23 anteriores o satisfaz.
+\end{examplebox}
+
 \subsection*{\faListOl~Resumo}
 
 \begin{itemize}[itemsep=1pt]

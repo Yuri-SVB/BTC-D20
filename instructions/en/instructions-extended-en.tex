@@ -52,6 +52,17 @@ For a 24-word seed (256 bits of entropy), generate words 1--23 exactly like the 
  \item \textbf{Last-word completion:} a wizard as above will offer exactly \textbf{8 valid candidates --- one per section}. Your D1 roll picks the section; take the candidate lying in it.
 \end{itemize}
 
+\begin{examplebox}{\faLightbulb~24-Word Example: the Example Phrase, Duplicated}
+Take the 12-word example above and duplicate it to obtain words 1--23; for the 24th, suppose you roll: 17 (invalid, roll again), 11 (valid, D1 = \texttt{11,12}). Among the wizard's 8 candidates (or by trial and error across section 11,12), exactly one word of that section --- \texttt{polar}, row \texttt{4}, column \texttt{12} --- completes a valid 24-word seed:
+
+\vspace{0.5em}
+\texttt{never use this example because private key secret need phrase true random}\\
+\texttt{never use this example because private key secret need phrase true polar}~\faCheckCircle
+\vspace{0.5em}
+
+Note the sacrifice: the duplication cannot keep \texttt{random} as the 24th word, because the 8-bit checksum of the full 256 bits differs from the 4-bit checksum that made \texttt{random} valid at 12 words. The checksum claims the last word --- and lands on \texttt{polar}, the one word in the \emph{same section} (D1 = \texttt{11,12}) as \texttt{random} whose combination with the previous 23 satisfies it.
+\end{examplebox}
+
 \subsection*{\faListOl~Summary}
 
 \begin{itemize}[itemsep=1pt]

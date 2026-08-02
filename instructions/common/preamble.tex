@@ -6,8 +6,22 @@
 % Standard editions are a strict one-pager (table on the verso): margins as
 % generous as the longest translation allows. Extended editions have no
 % one-page commitment: roomier margins, standard two-page flow.
-\newcommand{\standardlayout}{\geometry{hmargin=1.3cm, vmargin=1.1cm}}
-\newcommand{\extendedlayout}{\geometry{hmargin=1.7cm, vmargin=1.5cm}}
+\newcommand{\standardlayout}{%
+  \geometry{hmargin=1.3cm, vmargin=1.1cm}%
+  % One-pager: whatever height the language leaves unused is distributed
+  % across the section rhythm instead of pooling above the footer --
+  % same-order fil glue shares page slack proportionally (the footer's
+  % fill is demoted to 1fil below for exactly this reason). Minimum
+  % spacings stay compact, so the tightest translations still fit; the
+  % roomier ones breathe automatically.
+  \titlespacing*{\subsection}{0pt}{5pt plus 0.5fil}{2pt}%
+  \tcbset{before skip=6pt plus 0.3fil, after skip=6pt plus 0.3fil}}
+\newcommand{\extendedlayout}{%
+  \geometry{hmargin=1.7cm, vmargin=1.5cm}%
+  % Room to breathe: the two-page flow affords a more generous rhythm
+  % between sections than the one-pagers' compact spacing.
+  \titlespacing*{\subsection}{0pt}{12pt}{5pt}%
+  \tcbset{before skip=9pt, after skip=9pt}}
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{tcolorbox}
@@ -66,9 +80,12 @@
 \newcommand{\editionsline}[1]{%
   {\centering\scriptsize\color{black!60}#1 --- EN \textperiodcentered{} ES
   \textperiodcentered{} IT \textperiodcentered{} PT-BR\par}}
-% One-pagers pin it to the page bottom; kept glue-cheap (no center
-% environment, zero-minimum fill) so it never pushes the page over.
-\newcommand{\editionsfooter}[1]{\par\vspace*{\fill}\nopagebreak\editionsline{#1}}
+% One-pagers pin it toward the page bottom; kept glue-cheap (no center
+% environment, zero-minimum stretch) so it never pushes the page over.
+% First-order fil, not \fill: it must share slack with the stretchable
+% section rhythm of \standardlayout, not dominate it.
+\newcommand{\editionsfooter}[1]{%
+  \par\vspace*{0pt plus 1fil}\nopagebreak\editionsline{#1}}
 % Multi-page editions let it follow the content instead.
 \newcommand{\editionsfooterflow}[1]{\par\vspace{1.5em}\editionsline{#1}}
 

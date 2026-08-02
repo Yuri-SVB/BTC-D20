@@ -1,0 +1,38 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify-and-build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch the pinned wordlist (sparse, blob-filtered)
+        run: make wordlist
+
+      - name: Verify wordlist and worked examples
+        run: python3 tools/verify_tutorial.py
+
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-extra texlive-lang-european texlive-lang-portuguese \
+            texlive-lang-spanish texlive-lang-italian latexmk
+
+      - name: Build table and all instruction editions
+        run: make all
+
+      - name: Check committed PDFs are present
+        run: ls -la dist/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bip39-d20-pdfs
+          path: dist/*.pdf
+          if-no-files-found: error

@@ -1,0 +1,10 @@
+# LaTeX build clutter (final PDFs are committed under dist/ only)
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+table/*.pdf
+instructions/*/*.pdf

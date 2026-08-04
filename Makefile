@@ -6,6 +6,7 @@
 #   make table      lookup table only
 #   make en         one instruction edition (en, es, it, pt-br)
 #   make verify     run integrity + worked-example checks
+#   make test       run the sanity-test suite (table mathematics, BIP-39 vectors)
 #   make clean      remove LaTeX build clutter (keeps dist/)
 
 LANGS    := en es it pt-br
@@ -15,7 +16,7 @@ WORDLIST := external/bips/bip-0039/english.txt
 
 INSTRUCTION_PDFS := $(foreach l,$(LANGS),$(DIST)/instructions-$(l).pdf $(DIST)/instructions-extended-$(l).pdf)
 
-.PHONY: all table instructions verify wordlist clean $(LANGS)
+.PHONY: all table instructions verify test wordlist clean $(LANGS)
 
 all: table instructions
 
@@ -66,6 +67,9 @@ $(foreach l,$(LANGS),$(eval $(call EXT_RULE,$(l))))
 
 verify:
 	python3 tools/verify_tutorial.py
+
+test: $(WORDLIST)
+	python3 tools/test_sanity.py
 
 clean:
 	cd table && latexmk -C bip39-table.tex || true

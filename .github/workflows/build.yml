@@ -17,6 +17,9 @@ jobs:
       - name: Verify wordlist and worked examples
         run: python3 tools/verify_tutorial.py
 
+      - name: Sanity tests (table mathematics, BIP-39 vectors)
+        run: python3 tools/test_sanity.py
+
       - name: Install TeX Live
         run: |
           sudo apt-get update -qq

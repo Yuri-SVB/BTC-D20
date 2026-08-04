@@ -39,11 +39,14 @@ Agora você gerará sua 12ª palavra da semente. Você rola o dado e obtém: 18 
 
 \vspace{0.5em}
 \texttt{1.never 2.use 3.this 4.example 5.because 6.private 7.key 8.secret 9.need 10.phrase 11.true 12.random}. \faCheckCircle
+\vspace{0.25em}
+
+{\scriptsize Conferência (p.ex.\ em ferramenta de autocompletar): palavras válidas da seção \texttt{11,12}, uma por linha (1--16, nesta ordem): \texttt{payment, people, planet, pole, possible, prize, pulp, quality, random, raw, relief, result, return, room, royal, say}.\par}
 \end{examplebox}
 
 \subsection*{\faMagic~Atalho: Wizards com Autocompletar da Última Palavra}
 
-Várias ferramentas de semente completam a última palavra para você: dadas todas as palavras anteriores, elas listam exatamente as candidatas que tornam o \textit{checksum} válido --- por exemplo o fluxo \textit{final word} do \seedsignerlink{}, a calculadora de última palavra do \seedpickerlink{}, o BIP39 Recoverer offline da \coinplatelink{} ou a página BIP39 de \iancolemanlink{} (usada offline). Para uma semente de 12 palavras existem sempre exatamente \textbf{128 últimas palavras válidas: precisamente uma em cada uma das $8\times16=128$ linhas} da tabela. Então, em vez da tentativa e erro coluna por coluna: role D1 e D2 como de costume e tome, entre as candidatas do wizard, \textbf{a que estiver na sua seção e linha roladas}. Mesma palavra, mesma entropia, menos digitação.
+Várias ferramentas de semente completam a última palavra para você: dadas todas as palavras anteriores, elas listam exatamente as candidatas que tornam o \textit{checksum} válido --- por exemplo o fluxo \textit{final word} do \seedsignerlink{}, a calculadora de última palavra do \seedpickerlink{}, o BIP39 Recoverer offline da \coinplatelink{} ou a página BIP39 de \iancolemanlink{} (usada offline). Para uma semente de 12 palavras existem sempre exatamente \textbf{128 últimas palavras válidas: precisamente uma em cada uma das $8\times16=128$ linhas} da tabela. Então, em vez da tentativa e erro coluna por coluna: role D1 e D2 como de costume e tome, entre as candidatas do wizard, \textbf{a que estiver na sua seção e linha roladas}. Mesma palavra, mesma entropia, menos digitação. E não é um acaso do nosso exemplo: \emph{quaisquer} que sejam as 11 primeiras palavras, fixados D1 e D2, uma e apenas uma palavra daquela linha satisfaz o checksum --- os testes de sanidade do repositório verificam isso mecanicamente sobre prefixos aleatórios.
 
 \subsection*{\faLayerGroup~24 Palavras}
 
@@ -54,6 +57,8 @@ Para uma semente de 24 palavras (256 bits de entropia), gere as palavras 1--23 e
  \item \textbf{Autocompletar da última palavra:} um wizard como os acima oferecerá exatamente \textbf{8 candidatas válidas --- uma por seção}. Sua rolagem de D1 escolhe a seção; tome a candidata que estiver nela.
 \end{itemize}
 
+Igualmente garantido, não coincidência: \emph{quaisquer} que sejam as 23 primeiras palavras, fixado D1, uma e apenas uma palavra daquela seção satisfaz o checksum --- também verificado por máquina pelos testes de sanidade do repositório.
+
 \begin{examplebox}{\faLightbulb~Exemplo de 24 Palavras: a Frase do Exemplo, Duplicada}
 Pegue o exemplo de 12 palavras acima e duplique-o para obter as palavras 1--23; para a 24ª, suponha que você role: 17 (inválido, role novamente), 11 (válido, D1 = \texttt{11,12}). Entre as 8 candidatas do wizard (ou por tentativa e erro ao longo da seção 11,12), exatamente uma palavra dessa seção --- \texttt{polar}, linha \texttt{4}, coluna \texttt{12} --- completa uma semente válida de 24 palavras:
 
@@ -62,7 +67,7 @@ Pegue o exemplo de 12 palavras acima e duplique-o para obter as palavras 1--23; 
 \texttt{never use this example because private key secret need phrase true polar}~\faCheckCircle
 \vspace{0.5em}
 
-Note o sacrifício: a duplicação não pode manter \texttt{random} como 24ª palavra, porque o checksum de 8 bits dos 256 bits completos difere do checksum de 4 bits que tornava \texttt{random} válida com 12 palavras. O checksum reivindica a última palavra --- e cai em \texttt{polar}, a única palavra da \emph{mesma seção} (D1 = \texttt{11,12}) de \texttt{random} cuja combinação com as 23 anteriores o satisfaz.
+Note o sacrifício: a duplicação não pode manter \texttt{random} como 24ª palavra, porque o checksum de 8 bits dos 256 bits completos difere do checksum de 4 bits que tornava \texttt{random} válida com 12 palavras. O checksum reivindica a última palavra --- e cai em \texttt{polar}, a única palavra da \emph{mesma seção} (D1 = \texttt{11,12}) de \texttt{random} cuja combinação com as 23 anteriores o satisfaz. A lista completa de candidatas, uma por seção: \texttt{because} (1,2), \texttt{critic} (3,4), \texttt{fresh} (5,6), \texttt{ice} (7,8), \texttt{limb} (9,10), \texttt{polar} (11,12), \texttt{spare} (13,14), \texttt{wolf} (15,16).
 \end{examplebox}
 
 \subsection*{\faListOl~Resumo}

@@ -37,11 +37,14 @@ Now you will generate your 12th seed word. You roll the die and obtain: 18 (inva
 
 \vspace{0.5em}
 \texttt{1.never 2.use 3.this 4.example 5.because 6.private 7.key 8.secret 9.need 10.phrase 11.true 12.random}. \faCheckCircle
+\vspace{0.25em}
+
+{\scriptsize Cross-check (e.g.\ in a last-word tool): valid words of section \texttt{11,12}, one per row (1--16, in order): \texttt{payment, people, planet, pole, possible, prize, pulp, quality, random, raw, relief, result, return, room, royal, say}.\par}
 \end{examplebox}
 
 \subsection*{\faMagic~Shortcut: Wizards with Last-Word Completion}
 
-Several seed tools can complete the last word for you: given all previous words, they list exactly the candidates that make the checksum valid --- for example \seedsignerlink's \textit{final word} flow, the \seedpickerlink{} last-word calculator, \coinplatelink's offline BIP39 Recoverer, or \iancolemanlink's BIP39 page (used offline). For a 12-word seed there are always exactly \textbf{128 valid last words: precisely one in each of the $8\times16=128$ rows} of the table. So instead of column-by-column trial and error: roll D1 and D2 as usual, then take, among the wizard's candidates, \textbf{the one lying in your rolled section and row}. Same word, same entropy, fewer keystrokes.
+Several seed tools can complete the last word for you: given all previous words, they list exactly the candidates that make the checksum valid --- for example \seedsignerlink's \textit{final word} flow, the \seedpickerlink{} last-word calculator, \coinplatelink's offline BIP39 Recoverer, or \iancolemanlink's BIP39 page (used offline). For a 12-word seed there are always exactly \textbf{128 valid last words: precisely one in each of the $8\times16=128$ rows} of the table. So instead of column-by-column trial and error: roll D1 and D2 as usual, then take, among the wizard's candidates, \textbf{the one lying in your rolled section and row}. Same word, same entropy, fewer keystrokes. This is no accident of our example: \emph{whatever} the first 11 words, once D1 and D2 are fixed, one and only one word of that row satisfies the checksum --- the repository's sanity tests verify it mechanically over random prefixes.
 
 \subsection*{\faLayerGroup~24 Words}
 
@@ -52,6 +55,8 @@ For a 24-word seed (256 bits of entropy), generate words 1--23 exactly like the 
  \item \textbf{Last-word completion:} a wizard as above will offer exactly \textbf{8 valid candidates --- one per section}. Your D1 roll picks the section; take the candidate lying in it.
 \end{itemize}
 
+Likewise guaranteed, not coincidental: \emph{whatever} the first 23 words, once D1 is fixed, one and only one word of that section satisfies the checksum --- also machine-verified by the repository's sanity tests.
+
 \begin{examplebox}{\faLightbulb~24-Word Example: the Example Phrase, Duplicated}
 Take the 12-word example above and duplicate it to obtain words 1--23; for the 24th, suppose you roll: 17 (invalid, roll again), 11 (valid, D1 = \texttt{11,12}). Among the wizard's 8 candidates (or by trial and error across section 11,12), exactly one word of that section --- \texttt{polar}, row \texttt{4}, column \texttt{12} --- completes a valid 24-word seed:
 
@@ -60,7 +65,7 @@ Take the 12-word example above and duplicate it to obtain words 1--23; for the 2
 \texttt{never use this example because private key secret need phrase true polar}~\faCheckCircle
 \vspace{0.5em}
 
-Note the sacrifice: the duplication cannot keep \texttt{random} as the 24th word, because the 8-bit checksum of the full 256 bits differs from the 4-bit checksum that made \texttt{random} valid at 12 words. The checksum claims the last word --- and lands on \texttt{polar}, the one word in the \emph{same section} (D1 = \texttt{11,12}) as \texttt{random} whose combination with the previous 23 satisfies it.
+Note the sacrifice: the duplication cannot keep \texttt{random} as the 24th word, because the 8-bit checksum of the full 256 bits differs from the 4-bit checksum that made \texttt{random} valid at 12 words. The checksum claims the last word --- and lands on \texttt{polar}, the one word in the \emph{same section} (D1 = \texttt{11,12}) as \texttt{random} whose combination with the previous 23 satisfies it. The full candidate list, one per section: \texttt{because} (1,2), \texttt{critic} (3,4), \texttt{fresh} (5,6), \texttt{ice} (7,8), \texttt{limb} (9,10), \texttt{polar} (11,12), \texttt{spare} (13,14), \texttt{wolf} (15,16).
 \end{examplebox}
 
 \subsection*{\faListOl~Summary}

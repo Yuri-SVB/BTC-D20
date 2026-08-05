@@ -26,6 +26,7 @@ Exits non-zero on the first failure. No third-party dependencies.
 """
 
 import hashlib
+import re
 import sys
 from pathlib import Path
 
@@ -121,13 +122,22 @@ def main():
     preamble = (REPO / "instructions" / "common" / "preamble.tex").read_text()
     check("shared preamble defines the official repository URL",
           "github.com/Yuri-SVB/BTC-D20" in preamble)
+    # Language-invariant tokens pin the full verified coordinates, not just
+    # the example words -- a translator changing any printed number in any
+    # language breaks the build.
+    PINS = ["((3,4), 1, 11)", "\\texttt{candy}", "\\texttt{11,12}",
+            "\\texttt{14}, \\texttt{random}", "12.random"]
+    POLAR_COORDS = re.compile(r"polar\},\s+\w+\s+\\texttt\{4\},\s+\w+\s+\\texttt\{12\}")
     for lang in EDITIONS:
         for stem in (f"instructions-{lang}", f"instructions-extended-{lang}"):
             tex = (REPO / "instructions" / lang / f"{stem}.tex").read_text()
-            check(f"{stem} quotes verified example words",
-                  "candy" in tex and "random" in tex and "12.random" in tex)
+            check(f"{stem} pins the verified example words and coordinates",
+                  all(pin in tex for pin in PINS))
             check(f"{stem} links the official repository",
                   "\\repolink" in tex and "\\repoqr" in tex)
+            if "extended" in stem:
+                check(f"{stem} pins the 24-word example (polar, row 4, col 12)",
+                      "true polar" in tex and bool(POLAR_COORDS.search(tex)))
 
     # 6. wizard-completion claims printed in the extended editions
     finals12 = all_valid_finals(words, first11)

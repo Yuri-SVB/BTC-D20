@@ -150,5 +150,43 @@ class SanityTests(unittest.TestCase):
                 self.assertTrue(valid_mnemonic(self.words, phrase))
 
 
+def report():
+    """Human-readable demonstration (--report): run the exhaustive scan on
+    screen for the printed example prefix and one seeded random prefix."""
+    words = WORDLIST.read_text().split()
+    rng = random.Random(SEED)
+    print("=" * 72)
+    print("BTC-D20 sanity report -- exhaustive scan of all 2048 final words")
+    print("=" * 72)
+    for label, prefix in [
+        ("printed example", EXAMPLE_11),
+        ("random prefix (seeded)", rng.choices(words, k=11)),
+    ]:
+        finals = all_valid_finals(words, prefix)
+        rows = [i // 16 for i in finals]
+        print(f"\n12-word standard -- prefix: {label}")
+        print("  " + " ".join(prefix))
+        print(f"  2048 candidates tested -> {len(finals)} satisfy the checksum")
+        print(f"  rows covered: {len(set(rows))}/128, "
+              f"max per row: {max(rows.count(r) for r in set(rows))} "
+              f"=> exactly one valid word per row")
+    for label, prefix in [
+        ("printed example x2", EXAMPLE_12 + EXAMPLE_11),
+        ("random prefix (seeded)", rng.choices(words, k=23)),
+    ]:
+        finals = all_valid_finals(words, prefix)
+        print(f"\n24-word standard -- prefix: {label}")
+        print(f"  2048 candidates tested -> {len(finals)} satisfy the checksum, "
+              f"one per section:")
+        for i in finals:
+            s, r, c = i // 256, (i % 256) // 16, i % 16
+            print(f"    section {2*s+1:>2},{2*s+2:<2}  row {r+1:>2}  "
+                  f"column {c+1:>2}  ->  {words[i]}")
+    print()
+
+
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    if "--report" in sys.argv:
+        report()
+    else:
+        unittest.main(verbosity=2)

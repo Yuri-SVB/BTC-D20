@@ -8,3 +8,6 @@
 *.toc
 table/*.pdf
 instructions/*/*.pdf
+
+# Python bytecode (test suite imports)
+__pycache__/

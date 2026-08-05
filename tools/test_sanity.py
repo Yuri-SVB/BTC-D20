@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Sanity tests for the BTC-D20 table mathematics.
 
-These verify the structural guarantees the tutorials print -- not for the
-worked examples only (verify_tutorial.py covers those), but universally,
-over deterministic pseudo-random prefixes:
+These verify the structural guarantees the tutorials print. Scope, stated
+precisely: the scans are exhaustive over all 2048 candidate final words
+(and hence all rows / sections) -- for SAMPLE prefixes, drawn from three
+sources: the official reference-implementation test vectors, the
+tutorials' printed example, and deterministic seeded-random ones.
+(Exhaustiveness over the prefix space itself is impossible in principle:
+2048^11 = 2^121 prefixes.) The guarantees checked:
 
   1. 12 words: for ANY 11 previous words, once D1 and D2 of the 12th word
      are fixed (a row), exactly one word in that row satisfies the
@@ -84,13 +88,22 @@ class SanityTests(unittest.TestCase):
         cls.words = WORDLIST.read_text().split()
         cls.rng = random.Random(SEED)
 
-    def random_prefixes(self, length):
-        prefixes = [self.rng.choices(self.words, k=length) for _ in range(N_PREFIXES)]
-        return prefixes + [(EXAMPLE_11 if length == 11 else EXAMPLE_12 + EXAMPLE_11)]
+    @staticmethod
+    def reference_prefixes(length):
+        """Prefixes taken from the reference-implementation test vectors."""
+        return [m.split()[:length] for _, m in TREZOR_VECTORS
+                if len(m.split()) == length + 1]
+
+    def sample_prefixes(self, length):
+        """Reference-vector prefixes + the printed example + seeded-random ones."""
+        prefixes = self.reference_prefixes(length)
+        prefixes.append(EXAMPLE_11 if length == 11 else EXAMPLE_12 + EXAMPLE_11)
+        prefixes += [self.rng.choices(self.words, k=length) for _ in range(N_PREFIXES)]
+        return prefixes
 
     def test_12_words_exactly_one_valid_word_per_row(self):
         """For any 11-word prefix and any (D1, D2), exactly one column checks out."""
-        for prefix in self.random_prefixes(11):
+        for prefix in self.sample_prefixes(11):
             finals = all_valid_finals(self.words, prefix)
             self.assertEqual(len(finals), 128)
             self.assertEqual(sorted(i // 16 for i in finals), list(range(128)))
@@ -101,7 +114,7 @@ class SanityTests(unittest.TestCase):
 
     def test_24_words_exactly_one_valid_word_per_section(self):
         """For any 23-word prefix and any D1, exactly one word in the section."""
-        for prefix in self.random_prefixes(23):
+        for prefix in self.sample_prefixes(23):
             finals = all_valid_finals(self.words, prefix)
             self.assertEqual(len(finals), 8)
             self.assertEqual(sorted(i // 256 for i in finals), list(range(8)))
@@ -159,6 +172,7 @@ def report():
     print("BTC-D20 sanity report -- exhaustive scan of all 2048 final words")
     print("=" * 72)
     for label, prefix in [
+        ("reference vector (ff..ff)", ["zoo"] * 11),
         ("printed example", EXAMPLE_11),
         ("random prefix (seeded)", rng.choices(words, k=11)),
     ]:
@@ -171,6 +185,7 @@ def report():
               f"max per row: {max(rows.count(r) for r in set(rows))} "
               f"=> exactly one valid word per row")
     for label, prefix in [
+        ("reference vector (ff..ff)", ["zoo"] * 23),
         ("printed example x2", EXAMPLE_12 + EXAMPLE_11),
         ("random prefix (seeded)", rng.choices(words, k=23)),
     ]:

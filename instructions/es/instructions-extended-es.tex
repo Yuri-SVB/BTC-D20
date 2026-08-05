@@ -42,7 +42,7 @@ Ahora generarás tu 12ª palabra. Tiras el dado y obtienes: 18 (inválido, tira 
 
 \subsection*{\faMagic~Atajo: Asistentes con Autocompletado de la Última Palabra}
 
-Varias herramientas de semilla completan la última palabra por ti: dadas todas las palabras anteriores, listan exactamente las candidatas que hacen válido el \textit{checksum} --- por ejemplo el flujo \textit{final word} de \seedsignerlink{}, la calculadora de última palabra de \seedpickerlink{}, el BIP39 Recoverer offline de \coinplatelink{} o la página BIP39 de \iancolemanlink{} (usada offline). Para una semilla de 12 palabras existen siempre exactamente \textbf{128 últimas palabras válidas: precisamente una en cada una de las $8\times16=128$ filas} de la tabla. Así que, en vez del ensayo y error columna por columna: tira D1 y D2 como de costumbre y toma, entre las candidatas del asistente, \textbf{la que esté en tu sección y fila tiradas}. La misma palabra, la misma entropía, menos tecleo.
+Varias herramientas de semilla completan la última palabra por ti: dadas todas las palabras anteriores, listan exactamente las candidatas que hacen válido el \textit{checksum} --- por ejemplo el flujo \textit{final word} de \seedsignerlink{}, la calculadora de última palabra de \seedpickerlink{}, el BIP39 Recoverer offline de \coinplatelink{} o la página BIP39 de \iancolemanlink{} (usada offline). Para una semilla de 12 palabras existen siempre exactamente \textbf{128 últimas palabras válidas: precisamente una en cada una de las $8\times16=128$ filas} de la tabla. Así que, en vez del ensayo y error columna por columna: tira D1 y D2 como de costumbre y toma, entre las candidatas del asistente, \textbf{la que esté en tu sección y fila tiradas}. La misma palabra, la misma entropía, menos tecleo. Y no es casualidad de nuestro ejemplo: \emph{cualesquiera} que sean las primeras 11 palabras, fijados D1 y D2, una y solo una palabra de esa fila satisface el checksum --- las pruebas de sanidad del repositorio lo verifican mecánicamente sobre prefijos aleatorios.
 
 \subsection*{\faLayerGroup~24 Palabras}
 
@@ -52,6 +52,8 @@ Para una semilla de 24 palabras (256 bits de entropía), genera las palabras 1--
  \item \textbf{Ensayo y error} en el asistente de la billetera, a lo largo de la sección tirada (hasta 256 intentos --- tedioso, pero totalmente offline); o
  \item \textbf{Autocompletado de la última palabra:} un asistente como los de arriba ofrecerá exactamente \textbf{8 candidatas válidas --- una por sección}. Tu tirada de D1 elige la sección; toma la candidata que esté en ella.
 \end{itemize}
+
+Igualmente garantizado, no coincidencia: \emph{cualesquiera} que sean las primeras 23 palabras, fijado D1, una y solo una palabra de esa sección satisface el checksum --- también verificado por máquina por las pruebas de sanidad del repositorio.
 
 \begin{examplebox}{\faLightbulb~Ejemplo de 24 Palabras: la Frase del Ejemplo, Duplicada}
 Toma el ejemplo de 12 palabras de arriba y duplícalo para obtener las palabras 1--23; para la 24ª, supón que tiras: 17 (inválido, tira de nuevo), 11 (válido, D1 = \texttt{11,12}). Entre las 8 candidatas del asistente (o por ensayo y error a lo largo de la sección 11,12), exactamente una palabra de esa sección --- \texttt{polar}, fila \texttt{4}, columna \texttt{12} --- completa una semilla válida de 24 palabras:

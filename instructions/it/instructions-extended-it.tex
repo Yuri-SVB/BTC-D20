@@ -42,7 +42,7 @@ Ora genererai la tua 12ª parola. Lanci il dado e ottieni: 18 (non valido, rilan
 
 \subsection*{\faMagic~Scorciatoia: Assistenti con Completamento dell'Ultima Parola}
 
-Diversi strumenti per semi completano l'ultima parola al posto tuo: date tutte le parole precedenti, elencano esattamente le candidate che rendono valido il \textit{checksum} --- per esempio il flusso \textit{final word} di \seedsignerlink{}, il calcolatore dell'ultima parola di \seedpickerlink{}, il BIP39 Recoverer offline di \coinplatelink{} o la pagina BIP39 di \iancolemanlink{} (usata offline). Per un seme di 12 parole esistono sempre esattamente \textbf{128 ultime parole valide: precisamente una in ognuna delle $8\times16=128$ righe} della tabella. Quindi, invece dei tentativi colonna per colonna: lancia D1 e D2 come al solito e prendi, tra le candidate dell'assistente, \textbf{quella che si trova nella tua sezione e riga lanciate}. Stessa parola, stessa entropia, meno digitazione.
+Diversi strumenti per semi completano l'ultima parola al posto tuo: date tutte le parole precedenti, elencano esattamente le candidate che rendono valido il \textit{checksum} --- per esempio il flusso \textit{final word} di \seedsignerlink{}, il calcolatore dell'ultima parola di \seedpickerlink{}, il BIP39 Recoverer offline di \coinplatelink{} o la pagina BIP39 di \iancolemanlink{} (usata offline). Per un seme di 12 parole esistono sempre esattamente \textbf{128 ultime parole valide: precisamente una in ognuna delle $8\times16=128$ righe} della tabella. Quindi, invece dei tentativi colonna per colonna: lancia D1 e D2 come al solito e prendi, tra le candidate dell'assistente, \textbf{quella che si trova nella tua sezione e riga lanciate}. Stessa parola, stessa entropia, meno digitazione. E non è un caso del nostro esempio: \emph{qualunque} siano le prime 11 parole, fissati D1 e D2, una e una sola parola di quella riga soddisfa il checksum --- i test di sanità del repository lo verificano meccanicamente su prefissi casuali.
 
 \subsection*{\faLayerGroup~24 Parole}
 
@@ -52,6 +52,8 @@ Per un seme di 24 parole (256 bit di entropia), genera le parole 1--23 esattamen
  \item \textbf{Per tentativi} nell'assistente del portafoglio, lungo la sezione lanciata (fino a 256 tentativi --- tedioso, ma completamente offline); oppure
  \item \textbf{Completamento dell'ultima parola:} un assistente come quelli sopra offrirà esattamente \textbf{8 candidate valide --- una per sezione}. Il tuo lancio di D1 sceglie la sezione; prendi la candidata che vi si trova.
 \end{itemize}
+
+Ugualmente garantito, non una coincidenza: \emph{qualunque} siano le prime 23 parole, fissato D1, una e una sola parola di quella sezione soddisfa il checksum --- anch'esso verificato a macchina dai test di sanità del repository.
 
 \begin{examplebox}{\faLightbulb~Esempio a 24 Parole: la Frase dell'Esempio, Duplicata}
 Prendi l'esempio a 12 parole qui sopra e duplicalo per ottenere le parole 1--23; per la 24ª, supponi di lanciare: 17 (non valido, rilancia), 11 (valido, D1 = \texttt{11,12}). Tra le 8 candidate dell'assistente (o per tentativi lungo la sezione 11,12), esattamente una parola di quella sezione --- \texttt{polar}, riga \texttt{4}, colonna \texttt{12} --- completa un seme valido di 24 parole:

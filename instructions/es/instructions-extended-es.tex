@@ -38,6 +38,9 @@ Ahora generarás tu 12ª palabra. Tiras el dado y obtienes: 18 (inválido, tira 
 
 \vspace{0.5em}
 \texttt{1.never 2.use 3.this 4.example 5.because 6.private 7.key 8.secret 9.need 10.phrase 11.true 12.random}. \faCheckCircle
+\vspace{0.25em}
+
+{\scriptsize Comprobación (p.ej.\ en herramienta de autocompletado): palabras válidas de la sección \texttt{11,12}, una por fila (1--16, en orden): \texttt{payment, people, planet, pole, possible, prize, pulp, quality, random, raw, relief, result, return, room, royal, say}.\par}
 \end{examplebox}
 
 \subsection*{\faMagic~Atajo: Asistentes con Autocompletado de la Última Palabra}
@@ -63,7 +66,7 @@ Toma el ejemplo de 12 palabras de arriba y duplícalo para obtener las palabras 
 \texttt{never use this example because private key secret need phrase true polar}~\faCheckCircle
 \vspace{0.5em}
 
-Nota el sacrificio: la duplicación no puede conservar \texttt{random} como 24ª palabra, porque el checksum de 8 bits de los 256 bits completos difiere del checksum de 4 bits que hacía válida a \texttt{random} con 12 palabras. El checksum reclama la última palabra --- y cae en \texttt{polar}, la única palabra de la \emph{misma sección} (D1 = \texttt{11,12}) que \texttt{random} cuya combinación con las 23 anteriores lo satisface.
+Nota el sacrificio: la duplicación no puede conservar \texttt{random} como 24ª palabra, porque el checksum de 8 bits de los 256 bits completos difiere del checksum de 4 bits que hacía válida a \texttt{random} con 12 palabras. El checksum reclama la última palabra --- y cae en \texttt{polar}, la única palabra de la \emph{misma sección} (D1 = \texttt{11,12}) que \texttt{random} cuya combinación con las 23 anteriores lo satisface. La lista completa de candidatas, una por sección: \texttt{because} (1,2), \texttt{critic} (3,4), \texttt{fresh} (5,6), \texttt{ice} (7,8), \texttt{limb} (9,10), \texttt{polar} (11,12), \texttt{spare} (13,14), \texttt{wolf} (15,16).
 \end{examplebox}
 
 \subsection*{\faListOl~Resumen}

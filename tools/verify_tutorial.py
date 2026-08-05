@@ -161,6 +161,23 @@ def main():
                f"instructions-extended-{lang}.tex").read_text()
         check(f"instructions-extended-{lang} quotes the 24-word example",
               "polar" in tex and "true polar" in tex)
+
+    # printed candidate lists: computed from spec here, pinned verbatim in the
+    # sheets -- the printed lists can never drift from the math
+    sec_rows = sorted((i for i in finals12 if i // 256 == sec_random),
+                      key=lambda i: (i % 256) // 16)
+    list16 = ", ".join(words[i] for i in sec_rows)
+    check('16-candidate list: one per row of section 11,12, "random" at row 9',
+          len(sec_rows) == 16 and words[sec_rows[8]] == "random", list16)
+    list8 = ", ".join(f"\\texttt{{{words[i]}}} ({2 * (i // 256) + 1},{2 * (i // 256) + 2})"
+                      for i in sorted(finals24))
+    for lang in EDITIONS:
+        base = (REPO / "instructions" / lang / f"instructions-{lang}.tex").read_text()
+        ext = (REPO / "instructions" / lang /
+               f"instructions-extended-{lang}.tex").read_text()
+        check(f"instructions-{lang} prints the 16-candidate list", list16 in base)
+        check(f"instructions-extended-{lang} prints both candidate lists",
+              list16 in ext and list8 in ext)
     check("companion post linked by the extended editions exists",
           (REPO / "posts" / "kerckhoffs-lemma-coldcard.md").exists())
 

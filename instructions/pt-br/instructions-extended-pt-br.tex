@@ -39,6 +39,9 @@ Agora você gerará sua 12ª palavra da semente. Você rola o dado e obtém: 18 
 
 \vspace{0.5em}
 \texttt{1.never 2.use 3.this 4.example 5.because 6.private 7.key 8.secret 9.need 10.phrase 11.true 12.random}. \faCheckCircle
+\vspace{0.25em}
+
+{\scriptsize Conferência (p.ex.\ em ferramenta de autocompletar): palavras válidas da seção \texttt{11,12}, uma por linha (1--16, nesta ordem): \texttt{payment, people, planet, pole, possible, prize, pulp, quality, random, raw, relief, result, return, room, royal, say}.\par}
 \end{examplebox}
 
 \subsection*{\faMagic~Atalho: Wizards com Autocompletar da Última Palavra}
@@ -64,7 +67,7 @@ Pegue o exemplo de 12 palavras acima e duplique-o para obter as palavras 1--23; 
 \texttt{never use this example because private key secret need phrase true polar}~\faCheckCircle
 \vspace{0.5em}
 
-Note o sacrifício: a duplicação não pode manter \texttt{random} como 24ª palavra, porque o checksum de 8 bits dos 256 bits completos difere do checksum de 4 bits que tornava \texttt{random} válida com 12 palavras. O checksum reivindica a última palavra --- e cai em \texttt{polar}, a única palavra da \emph{mesma seção} (D1 = \texttt{11,12}) de \texttt{random} cuja combinação com as 23 anteriores o satisfaz.
+Note o sacrifício: a duplicação não pode manter \texttt{random} como 24ª palavra, porque o checksum de 8 bits dos 256 bits completos difere do checksum de 4 bits que tornava \texttt{random} válida com 12 palavras. O checksum reivindica a última palavra --- e cai em \texttt{polar}, a única palavra da \emph{mesma seção} (D1 = \texttt{11,12}) de \texttt{random} cuja combinação com as 23 anteriores o satisfaz. A lista completa de candidatas, uma por seção: \texttt{because} (1,2), \texttt{critic} (3,4), \texttt{fresh} (5,6), \texttt{ice} (7,8), \texttt{limb} (9,10), \texttt{polar} (11,12), \texttt{spare} (13,14), \texttt{wolf} (15,16).
 \end{examplebox}
 
 \subsection*{\faListOl~Resumo}

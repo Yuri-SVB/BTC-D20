@@ -7,7 +7,7 @@
 % generous as the longest translation allows. Extended editions have no
 % one-page commitment: roomier margins, standard two-page flow.
 \newcommand{\standardlayout}{%
-  \geometry{hmargin=1.3cm, vmargin=1.1cm}%
+  \geometry{hmargin=1.25cm, vmargin=1.05cm}%
   % One-pager: whatever height the language leaves unused is distributed
   % across the section rhythm instead of pooling above the footer --
   % same-order fil glue shares page slack proportionally (the footer's
@@ -15,7 +15,7 @@
   % spacings stay compact, so the tightest translations still fit; the
   % roomier ones breathe automatically.
   \titlespacing*{\subsection}{0pt}{5pt plus 0.5fil}{2pt}%
-  \tcbset{before skip=6pt plus 0.3fil, after skip=6pt plus 0.3fil}}
+  \tcbset{before skip=5pt plus 0.3fil, after skip=5pt plus 0.3fil}}
 \newcommand{\extendedlayout}{%
   \geometry{hmargin=1.7cm, vmargin=1.5cm}%
   % Room to breathe: the two-page flow affords a more generous rhythm
@@ -66,8 +66,8 @@
 \renewcommand{\subsection}{\bipSecBreak\bipOrigSubsection}
 \clubpenalty=10000
 \widowpenalty=10000
-\setlist{itemsep=1pt, topsep=2pt, parsep=0pt}
-\tcbset{boxsep=1pt, top=2pt, bottom=2pt, left=4pt, right=4pt,
+\setlist{itemsep=1pt, topsep=1pt, parsep=0pt}
+\tcbset{boxsep=1pt, top=1.5pt, bottom=1.5pt, left=4pt, right=4pt,
         before skip=6pt, after skip=6pt}
 
 % Box styles used by every edition.

@@ -3,7 +3,78 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Busca Offline</title>
+<h2>BTC-D20 — Auxiliar Offline de Busca e Checksum</h2>
+
+<div class="tutorial">
+    <h3>Como utilizar:</h3>
+
+<p>
+    Lance os dados D20 conforme as instruções oficiais do projeto BTC-D20
+    e informe os resultados nos campos D1, D2 e D3.
+</p>
+
+<h4>Busca normal de uma palavra</h4>
+
+<p>
+    Para localizar uma palavra, preencha os três campos:
+    <strong>D1, D2 e D3</strong>.
+    Depois, clique em <strong>Buscar</strong>.
+</p>
+
+<p>
+    O sistema exibirá o número do registro e a palavra correspondente,
+    seguindo a mesma organização da tabela do projeto.
+</p>
+
+<h4>Checksum para seed de 12 palavras</h4>
+
+<p>
+    Após obter as primeiras 11 palavras conforme o método BTC-D20,
+    faça o lançamento dos dados para a palavra de checksum.
+</p>
+
+<p>
+    Preencha somente os campos <strong>D1 e D2</strong>.
+    Deixe o campo <strong>D3 vazio</strong> e clique em
+    <strong>Buscar</strong>.
+</p>
+
+<p>
+    Serão exibidas as <strong>16 palavras possíveis</strong> daquela linha.
+    Essas palavras deverão ser testadas conforme as instruções oficiais
+    do projeto para identificar a palavra de checksum válida.
+</p>
+
+<h4>Checksum para seed de 24 palavras</h4>
+
+<p>
+    Após obter as primeiras 23 palavras conforme o método BTC-D20,
+    faça o lançamento dos dados para a palavra de checksum.
+</p>
+
+<p>
+    Preencha somente o campo <strong>D1</strong>.
+    Deixe os campos <strong>D2 e D3 vazios</strong> e clique em
+    <strong>Buscar</strong>.
+</p>
+
+<p>
+    Serão exibidas as <strong>256 palavras possíveis</strong> do bloco.
+    Essas palavras deverão ser testadas conforme as instruções oficiais
+    do projeto para identificar a palavra de checksum válida.
+</p>
+
+<h4>Importante</h4>
+
+<p>
+    Esta ferramenta funciona localmente e offline em um navegador.
+    Ela serve apenas como auxiliar de consulta e não substitui o manual,
+    a tabela impressa ou o procedimento oficial do projeto BTC-D20.
+</p>
+
+
+</div>
+
 <style>
 body{font-family:Arial;background:#111;color:#eee;max-width:500px;margin:auto;padding:20px}
 input,button{width:100%;padding:10px;margin:8px 0;font-size:18px}
@@ -2089,55 +2160,259 @@ zoo
 let palavraAtual = "";
 let historico = [];
 
-function buscar(){
+function buscar() {
 
-    const campo1 = parseInt(c1.value);
-    const linha = parseInt(c2.value);
-    const coluna = parseInt(c3.value);
+    const campo1Texto = document.getElementById("c1").value.trim();
+    const linhaTexto = document.getElementById("c2").value.trim();
+    const colunaTexto = document.getElementById("c3").value.trim();
 
-    // Validação
+    const campo1 = parseInt(campo1Texto);
+    const linha = linhaTexto === "" ? null : parseInt(linhaTexto);
+    const coluna = colunaTexto === "" ? null : parseInt(colunaTexto);
+
+    const resultado = document.getElementById("r");
+
+    // D1 é obrigatório
     if (
-    isNaN(campo1) || campo1 < 1 || campo1 > 16 ||
-    isNaN(linha)  || linha  < 1 || linha  > 16 ||
-    isNaN(coluna) || coluna < 1 || coluna > 16
-) {
-    palavraAtual = "";
-    document.getElementById("r").innerHTML =
-        "<b>Palavra não encontrada</b>";
-    return;
-}
+        campo1Texto === "" ||
+        isNaN(campo1) ||
+        campo1 < 1 ||
+        campo1 > 16
+    ) {
+        palavraAtual = "";
+        resultado.innerHTML = "<b>D1 inválido ou não preenchido.</b>";
+        return;
+    }
 
-   // Campo 1:
-    // 1 ou 2   = bloco 1
-    // 3 ou 4   = bloco 2
-    // 5 ou 6   = bloco 3
+    // Validação D2, caso preenchida
+    if (
+        linha !== null &&
+        (isNaN(linha) || linha < 1 || linha > 16)
+    ) {
+        palavraAtual = "";
+        resultado.innerHTML = "<b>D2 inválida.</b>";
+        return;
+    }
+
+    // Validação D3, caso preenchida
+    if (
+        coluna !== null &&
+        (isNaN(coluna) || coluna < 1 || coluna > 16)
+    ) {
+        palavraAtual = "";
+        resultado.innerHTML = "<b>D3 inválida.</b>";
+        return;
+    }
+
+    // Não permite preencher D3 sem preencher D2
+    if (linha === null && coluna !== null) {
+        palavraAtual = "";
+        resultado.innerHTML =
+            "<b>Preencha primeiro a D2 antes da D3.</b>";
+        return;
+    }
+
+    // 1 ou 2 = bloco 1
+    // 3 ou 4 = bloco 2
     // ...
     // 15 ou 16 = bloco 8
     const bloco = Math.ceil(campo1 / 2);
 
-    // Cada bloco possui 16 linhas × 16 colunas = 256 registros
+    // Primeiro registro do bloco
+    const inicioBloco = ((bloco - 1) * 256) + 1;
+
+    /*
+     * OPÇÃO 1
+     * Somente D1 preenchido:
+     * mostra as 256 palavras do bloco.
+     */
+    if (linha === null && coluna === null) {
+
+        const palavrasBloco = [];
+
+        for (let i = 0; i < 256; i++) {
+
+            const registro = inicioBloco + i;
+            const palavra = WORDS[registro - 1];
+
+            if (palavra) {
+                palavrasBloco.push({
+                    registro: registro,
+                    palavra: palavra
+                });
+            }
+        }
+
+        if (palavrasBloco.length === 0) {
+            palavraAtual = "";
+            resultado.innerHTML = "<b>Nenhuma palavra encontrada.</b>";
+            return;
+        }
+
+        palavraAtual = "";
+
+        resultado.innerHTML =
+    "<h3>Bloco " + bloco + " (Checksum Carteira 24 Seed — 256 palavras possiveis)</h3>" +
+    criarTabelaBloco(palavrasBloco);
+
+        return;
+    }
+
+    /*
+     * OPÇÃO 2
+     * D1 e D2 preenchidos:
+     * mostra as 16 palavras da linha.
+     */
+    if (linha !== null && coluna === null) {
+
+        const inicioLinha =
+            ((bloco - 1) * 256) +
+            ((linha - 1) * 16) +
+            1;
+
+        const palavrasLinha = [];
+
+        for (let i = 0; i < 16; i++) {
+
+            const registro = inicioLinha + i;
+            const palavra = WORDS[registro - 1];
+
+            if (palavra) {
+                palavrasLinha.push({
+                    coluna: i + 1,
+                    registro: registro,
+                    palavra: palavra
+                });
+            }
+        }
+
+        if (palavrasLinha.length === 0) {
+            palavraAtual = "";
+            resultado.innerHTML = "<b>Nenhuma palavra encontrada.</b>";
+            return;
+        }
+
+        palavraAtual = "";
+
+        resultado.innerHTML =
+    "<h3>Bloco " + bloco +
+    " — Linha " + linha +
+    " (Checksum carteira 12 Seed - 16 palavras possiveis)</h3>" +
+    criarTabelaLinha(palavrasLinha);
+
+        return;
+    }
+
+    /*
+     * OPÇÃO 3
+     * D1, D2 e D3 preenchidos:
+     * mostra uma palavra.
+     */
     const registro =
         ((bloco - 1) * 256) +
         ((linha - 1) * 16) +
         coluna;
 
-    // Busca a palavra
     const palavra = WORDS[registro - 1];
 
-if (typeof palavra === "undefined" || palavra.trim() === "") {
-    palavraAtual = "";
-    document.getElementById("r").innerHTML =
-        "<b>Palavra não encontrada</b>";
-    return;
+    if (
+        typeof palavra === "undefined" ||
+        palavra.trim() === ""
+    ) {
+        palavraAtual = "";
+        resultado.innerHTML = "<b>Palavra não encontrada.</b>";
+        return;
+    }
+
+    palavraAtual = palavra;
+    resultado.innerHTML =
+        "<br><b>Registro:</b> " + registro +
+        "<br><b>Palavra:</b> " + palavra;
 }
 
-   // Guarda a palavra
-palavraAtual = palavra;
+function criarTabelaLinha(lista) {
 
-// Mostra o resultado na tela
-document.getElementById("r").innerHTML =
-    "<b>Registro:</b> " + registro +
-    "<br><b>Palavra:</b> " + palavra;
+    let html = `
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(4, 1fr);
+            gap:8px;
+            margin-top:10px;
+        ">
+    `;
+
+    lista.forEach(function(item) {
+
+        html += `
+            <div style="
+                background:#222;
+                border:1px solid #444;
+                border-radius:6px;
+                padding:10px;
+                text-align:center;
+            ">
+                <b>${item.palavra}</b><br>
+                <small>Registro ${item.registro}</small>
+            </div>
+        `;
+    });
+
+    html += "</div>";
+
+    return html;
+}
+
+function criarTabelaBloco(lista) {
+
+    let html = `
+        <div style="
+            overflow-x:auto;
+            margin-top:10px;
+        ">
+        <table style="
+            width:100%;
+            border-collapse:collapse;
+            background:#181818;
+        ">
+            <tbody>
+    `;
+
+    for (let linha = 1; linha <= 16; linha++) {
+
+        html += "<tr>";
+
+        for (let coluna = 1; coluna <= 16; coluna++) {
+
+            const indice = ((linha - 1) * 16) + (coluna - 1);
+            const item = lista[indice];
+
+            html += `
+                <td style="
+                    border:1px solid #444;
+                    padding:8px;
+                    text-align:center;
+                    white-space:nowrap;
+                ">
+                    ${
+                        item
+                        ? `<b>${item.palavra}</b><br>
+                           <small>Registro ${item.registro}</small>`
+                        : ""
+                    }
+                </td>
+            `;
+        }
+
+        html += "</tr>";
+    }
+
+    html += `
+            </tbody>
+        </table>
+        </div>
+    `;
+
+    return html;
 }
 
 // Salva a palavra no histórico

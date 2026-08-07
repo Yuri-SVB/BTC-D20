@@ -16,7 +16,7 @@ WORDLIST := external/bips/bip-0039/english.txt
 
 INSTRUCTION_PDFS := $(foreach l,$(LANGS),$(DIST)/instructions-$(l).pdf $(DIST)/instructions-extended-$(l).pdf)
 
-.PHONY: all table instructions verify test wordlist clean $(LANGS)
+.PHONY: all table instructions offline-tool verify test wordlist clean $(LANGS)
 
 all: table instructions
 
@@ -46,6 +46,9 @@ $(WORDLIST):
 	git -C external/bips checkout -q FETCH_HEAD
 
 wordlist: $(WORDLIST)
+
+offline-tool: $(WORDLIST) tools/offline-search.template.html tools/generate_offline_search.py
+	python3 tools/generate_offline_search.py
 
 # One explicit rule per language (a pattern rule cannot repeat '%' inside a
 # single prerequisite path like instructions/%/instructions-%.tex).

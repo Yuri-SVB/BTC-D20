@@ -100,10 +100,23 @@ Imprima a folha de instruções no seu idioma e a tabela em frente e verso (enca
 - Se suspeitar que uma semente existente veio de software ou firmware defeituoso, gere uma semente nova com este método e transfira os fundos. Atualização de firmware não conserta semente fraca.
 - A semente de exemplo impressa nas instruções é pública. Nunca a use.
 
+## Apoio
+
+Este kit é livre, e está pronto. Não precisa de servidor, assinatura nem
+atualização para continuar funcionando — imprima e é seu. Se ele valeu alguma
+coisa para você, há um endereço Lightning:
+
+**⚡ [github.com/Yuri-SVB/SUPPORT](https://github.com/Yuri-SVB/SUPPORT)**
+
+Nenhum recurso é restrito, nada fica reservado para apoiadores, e doar não dá
+prioridade. Se quiser que algo mude, abra uma issue — isso direciona o trabalho
+melhor do que dinheiro.
+
 ## Autor e trabalhos relacionados
 
 Por **Yuri da Silva Villas Boas** — autor da [BIP-450 (Formosa)](https://github.com/bitcoin/bips/blob/master/bip-0450.mediawiki) e criador do **Great Wall**, protocolo de software livre para autocustódia de Bitcoin resistente a coerção. Gerar uma semente forte é o primeiro passo; protegê-la contra roubo e coerção é o resto.
 
+- Implementação de referência do Formosa (BIP-450): [github.com/Yuri-SVB/formosa](https://github.com/Yuri-SVB/formosa) — entropia da semente como frases gramaticais, compatível para frente e para trás com BIP-39
 - Great Wall e outros projetos: [github.com/Yuri-SVB](https://github.com/Yuri-SVB)
 - Tutoriais, cursos, comunidade: [www.loudproudandfree.com](https://www.loudproudandfree.com)
 

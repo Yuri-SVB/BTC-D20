@@ -93,8 +93,16 @@
 % hyperref is loaded last by convention (we use no \ref/bookmarks).
 \usepackage[hidelinks]{hyperref}
 \newcommand{\repourl}{https://github.com/Yuri-SVB/BTC-D20}
-\newcommand{\repolink}{\href{\repourl}{\texttt{github.com/Yuri-SVB/BTC-D20}}}
-\newcommand{\repoqr}{\href{\repourl}{\qrcode[height=2.2cm]{https://github.com/Yuri-SVB/BTC-D20}}}
+% Each language sheet points at its own README, so a reader scanning the code
+% on a Spanish sheet lands on Spanish prose. Language files override
+% \readmeurl after loading this preamble; English is the default.
+\newcommand{\readmeurl}{https://github.com/Yuri-SVB/BTC-D20/blob/main/README.md}
+\newcommand{\repolink}{\href{\readmeurl}{\texttt{github.com/Yuri-SVB/BTC-D20}}}
+% \qrcode needs its argument already expanded, so build the call with \edef
+% rather than handing it a macro.
+\newcommand{\repoqr}{%
+  \begingroup\edef\qrtmp{\endgroup
+    \noexpand\href{\readmeurl}{\noexpand\qrcode[height=2.2cm]{\readmeurl}}}\qrtmp}
 \newcommand{\lpflink}{\href{https://www.loudproudandfree.com}{\texttt{www.loudproudandfree.com}}}
 \newcommand{\gwlink}{\href{https://github.com/Yuri-SVB}{\texttt{github.com/Yuri-SVB}}}
 \newcommand{\paperlink}{\href{\repourl/blob/main/posts/kerckhoffs-lemma-coldcard.md}{\texttt{posts/kerckhoffs-lemma-coldcard.md}}}

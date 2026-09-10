@@ -100,10 +100,23 @@ Print the instruction sheet in your language and the table double-sided (long-ed
 - If you suspect an existing seed came from flawed software or firmware, generate a fresh seed with this method and move funds to it. Firmware updates cannot repair weak seeds.
 - The example seed printed in the instructions is public. Never use it.
 
+## Support
+
+This kit is free, and finished. It needs no server, no subscription, and no
+update to keep working — print it and it is yours. If it was worth something to
+you, there is a Lightning address:
+
+**⚡ [github.com/Yuri-SVB/SUPPORT](https://github.com/Yuri-SVB/SUPPORT)**
+
+No feature is gated, nothing is held back for supporters, and donating buys no
+priority. If you want something changed, open an issue — that directs the work
+better than money does.
+
 ## Author and related work
 
 By **Yuri da Silva Villas Boas** — author of [BIP-450 (Formosa)](https://github.com/bitcoin/bips/blob/master/bip-0450.mediawiki) and creator of **Great Wall**, a free-software protocol for coercion-resistant Bitcoin self-custody. Generating a strong seed is step one; protecting it against theft and coercion is the rest.
 
+- Formosa (BIP-450) reference implementation: [github.com/Yuri-SVB/formosa](https://github.com/Yuri-SVB/formosa) — seed entropy as grammatical sentences, forwards- and backwards-compatible with BIP-39
 - Great Wall & other projects: [github.com/Yuri-SVB](https://github.com/Yuri-SVB)
 - Tutorials, courses, community: [www.loudproudandfree.com](https://www.loudproudandfree.com)
 

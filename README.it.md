@@ -100,10 +100,23 @@ Stampa il foglio di istruzioni nella tua lingua e la tabella fronte-retro (rileg
 - Se sospetti che un seme esistente provenga da software o firmware difettoso, genera un seme nuovo con questo metodo e sposta i fondi. Aggiornare il firmware non ripara un seme debole.
 - Il seme di esempio stampato nelle istruzioni è pubblico. Non usarlo mai.
 
+## Sostegno
+
+Questo kit è libero, ed è finito. Non richiede server, abbonamenti né
+aggiornamenti per continuare a funzionare — stampalo ed è tuo. Se ti è servito,
+c'è un indirizzo Lightning:
+
+**⚡ [github.com/Yuri-SVB/SUPPORT](https://github.com/Yuri-SVB/SUPPORT)**
+
+Nessuna funzione è riservata, nulla viene trattenuto per chi contribuisce, e
+donare non dà priorità. Se vuoi che qualcosa cambi, apri una issue — orienta il
+lavoro meglio del denaro.
+
 ## Autore e lavori correlati
 
 Di **Yuri da Silva Villas Boas** — autore della [BIP-450 (Formosa)](https://github.com/bitcoin/bips/blob/master/bip-0450.mediawiki) e creatore di **Great Wall**, un protocollo di software libero per l'autocustodia di Bitcoin resistente alla coercizione. Generare un seme forte è solo il primo passo; proteggerlo da furto e coercizione è il resto.
 
+- Implementazione di riferimento di Formosa (BIP-450): [github.com/Yuri-SVB/formosa](https://github.com/Yuri-SVB/formosa) — entropia del seme come frasi grammaticali, compatibile in avanti e all'indietro con BIP-39
 - Great Wall e altri progetti: [github.com/Yuri-SVB](https://github.com/Yuri-SVB)
 - Tutorial, corsi, comunità: [www.loudproudandfree.com](https://www.loudproudandfree.com)
 

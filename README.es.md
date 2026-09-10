@@ -100,10 +100,23 @@ Imprime la hoja de instrucciones en tu idioma y la tabla a doble cara (encuadern
 - Si sospechas que una semilla existente proviene de software o firmware defectuoso, genera una semilla nueva con este método y transfiere los fondos. Actualizar el firmware no repara una semilla débil.
 - La semilla de ejemplo impresa en las instrucciones es pública. Nunca la uses.
 
+## Apoyo
+
+Este kit es libre, y está terminado. No necesita servidor, suscripción ni
+actualizaciones para seguir funcionando — imprímelo y es tuyo. Si te resultó
+valioso, hay una dirección Lightning:
+
+**⚡ [github.com/Yuri-SVB/SUPPORT](https://github.com/Yuri-SVB/SUPPORT)**
+
+Ninguna función está restringida, nada se reserva para quienes aportan, y donar
+no otorga prioridad. Si quieres que algo cambie, abre un issue — eso orienta el
+trabajo mejor que el dinero.
+
 ## Autor y trabajos relacionados
 
 Por **Yuri da Silva Villas Boas** — autor de la [BIP-450 (Formosa)](https://github.com/bitcoin/bips/blob/master/bip-0450.mediawiki) y creador de **Great Wall**, un protocolo de software libre para la autocustodia de Bitcoin resistente a la coerción. Generar una semilla fuerte es el primer paso; protegerla contra el robo y la coerción es el resto.
 
+- Implementación de referencia de Formosa (BIP-450): [github.com/Yuri-SVB/formosa](https://github.com/Yuri-SVB/formosa) — entropía de semilla como frases gramaticales, compatible hacia adelante y hacia atrás con BIP-39
 - Great Wall y otros proyectos: [github.com/Yuri-SVB](https://github.com/Yuri-SVB)
 - Tutoriales, cursos, comunidad: [www.loudproudandfree.com](https://www.loudproudandfree.com)
 

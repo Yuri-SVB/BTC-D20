@@ -118,6 +118,6 @@ Por **Yuri da Silva Villas Boas** — autor da [BIP-450 (Formosa)](https://githu
 
 - Implementação de referência do Formosa (BIP-450): [github.com/Yuri-SVB/formosa](https://github.com/Yuri-SVB/formosa) — entropia da semente como frases gramaticais, compatível para frente e para trás com BIP-39
 - Great Wall e outros projetos: [github.com/Yuri-SVB](https://github.com/Yuri-SVB)
-- Tutoriais, cursos, comunidade: [www.loudproudandfree.com](https://www.loudproudandfree.com)
+- Tutoriais, cursos, comunidade: [yuri-svb.github.io](https://yuri-svb.github.io)
 
 Estão planejados vídeos passo a passo deste tutorial nos quatro idiomas — acompanhe pelos links acima.

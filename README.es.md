@@ -118,6 +118,6 @@ Por **Yuri da Silva Villas Boas** — autor de la [BIP-450 (Formosa)](https://gi
 
 - Implementación de referencia de Formosa (BIP-450): [github.com/Yuri-SVB/formosa](https://github.com/Yuri-SVB/formosa) — entropía de semilla como frases gramaticales, compatible hacia adelante y hacia atrás con BIP-39
 - Great Wall y otros proyectos: [github.com/Yuri-SVB](https://github.com/Yuri-SVB)
-- Tutoriales, cursos, comunidad: [www.loudproudandfree.com](https://www.loudproudandfree.com)
+- Tutoriales, cursos, comunidad: [yuri-svb.github.io](https://yuri-svb.github.io)
 
 Hay vídeos paso a paso de este tutorial planificados en los cuatro idiomas — síguelos en los enlaces de arriba.

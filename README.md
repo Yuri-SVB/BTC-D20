@@ -118,6 +118,6 @@ By **Yuri da Silva Villas Boas** — author of [BIP-450 (Formosa)](https://githu
 
 - Formosa (BIP-450) reference implementation: [github.com/Yuri-SVB/formosa](https://github.com/Yuri-SVB/formosa) — seed entropy as grammatical sentences, forwards- and backwards-compatible with BIP-39
 - Great Wall & other projects: [github.com/Yuri-SVB](https://github.com/Yuri-SVB)
-- Tutorials, courses, community: [www.loudproudandfree.com](https://www.loudproudandfree.com)
+- Tutorials, courses, community: [yuri-svb.github.io](https://yuri-svb.github.io)
 
 Video walkthroughs of this tutorial in all four languages are planned — follow the links above.

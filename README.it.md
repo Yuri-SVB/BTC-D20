@@ -104,7 +104,7 @@ Stampa il foglio di istruzioni nella tua lingua e la tabella fronte-retro (rileg
 
 Questo kit è libero, ed è finito. Non richiede server, abbonamenti né
 aggiornamenti per continuare a funzionare — stampalo ed è tuo. Se ti è servito,
-c'è un indirizzo Lightning:
+c'è un'offerta Lightning e un indirizzo on-chain:
 
 **⚡ [github.com/Yuri-SVB/SUPPORT](https://github.com/Yuri-SVB/SUPPORT)**
 

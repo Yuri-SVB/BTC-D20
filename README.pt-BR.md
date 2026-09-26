@@ -104,7 +104,7 @@ Imprima a folha de instruções no seu idioma e a tabela em frente e verso (enca
 
 Este kit é livre, e está pronto. Não precisa de servidor, assinatura nem
 atualização para continuar funcionando — imprima e é seu. Se ele valeu alguma
-coisa para você, há um endereço Lightning:
+coisa para você, há uma oferta Lightning e um endereço on-chain:
 
 **⚡ [github.com/Yuri-SVB/SUPPORT](https://github.com/Yuri-SVB/SUPPORT)**
 

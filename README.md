@@ -104,7 +104,7 @@ Print the instruction sheet in your language and the table double-sided (long-ed
 
 This kit is free, and finished. It needs no server, no subscription, and no
 update to keep working — print it and it is yours. If it was worth something to
-you, there is a Lightning address:
+you, there is a Lightning offer and an on-chain address:
 
 **⚡ [github.com/Yuri-SVB/SUPPORT](https://github.com/Yuri-SVB/SUPPORT)**
 
